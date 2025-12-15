@@ -1,17 +1,9 @@
-import Comment from './components/Comment'
-import comments from '../data/comments.json'
+import CommentsList from "./components/CommentsList"
 
 function App() {
   return (
     <div className="App">
-      <div className="comments-list">
-        {comments.map(comment => (
-          <Comment
-            parentComment={comment}
-            key={comment.id}
-          />
-        ))}
-      </div>
+      <CommentsList />
     </div>
   )
 }
