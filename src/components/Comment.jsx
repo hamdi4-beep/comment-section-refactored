@@ -3,22 +3,23 @@ import { update } from "../utils/commentUtils"
 
 const CommentCard = ({
   comment,
+  parentComment,
   updateComment
 }) => {
   const handleUpVoteClick = () => {
-    updateComment(parentComment =>
-      update(parentComment, comment, {
-        score: comment.score + 1
-      })
-    )
+    const updatedComment = update(parentComment, comment, {
+      score: comment.score + 1
+    })
+
+    updateComment(updatedComment)
   }
 
   const handleDownVoteClick = () => {
-    updateComment(parentComment =>
-      update(parentComment, comment, {
-        score: comment.score - 1
-      })
-    )
+    const updatedComment = update(parentComment, comment, {
+      score: comment.score - 1
+    })
+
+    updateComment(updatedComment)
   }
 
   const handleReplyClick = () => {
@@ -45,11 +46,11 @@ const CommentCard = ({
   }
 
   const handleEditClick = () => {
-    updateComment(parentComment =>
-      update(parentComment, comment, {
+    const updatedComment = update(parentComment, comment, {
         content: 'edited!'
       })
-    )
+
+    updateComment(updatedComment)
   }
 
   const handleDeleteClick = () => {
@@ -63,18 +64,20 @@ const CommentCard = ({
   return (
     <div className="comment">
       <div className="score-component">
-        <button onClick={handleUpVoteClick}>+</button>
+        <button disabled={voteStatus === 'upvoted'} onClick={handleUpVoteClick}>+</button>
         <span>{comment.score}</span>
-        <button onClick={handleDownVoteClick}>-</button>
+        <button disabled={voteStatus === 'downvoted'} onClick={handleDownVoteClick}>-</button>
       </div>
 
       <div className="content">
         <div className="card-header">
-          <div className="user-img">
-            <img src={comment.user.image.png} alt="user avatar" />
-          </div>
+          <div className="user">
+            <div className="user-img">
+              <img src={comment.user.image.png} alt="user avatar" />
+            </div>
 
-          <p>{comment.user.username}</p>
+            <p>{comment.user.username}</p>
+          </div>
 
           <div className="actions">
             <button onClick={handleReplyClick}>Reply</button>
@@ -96,6 +99,7 @@ function Comment({ parentComment }) {
     <div className="thread">
       <CommentCard
         comment={parentItem}
+        parentComment={null}
         updateComment={setParentItem}
       />
 
@@ -103,6 +107,7 @@ function Comment({ parentComment }) {
         {parentItem.replies.map(reply => (
           <CommentCard
             comment={reply}
+            parentComment={parentItem}
             updateComment={setParentItem}
             key={reply.id}
           />
