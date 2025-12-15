@@ -8,16 +8,16 @@ const CommentCard = ({
 }) => {
   const handleUpVoteClick = () => {
     const updatedComment = update(parentComment, comment, {
-      score: comment.score + 1
-    })
+        score: comment.score + 1
+      })
 
     updateComment(updatedComment)
   }
 
   const handleDownVoteClick = () => {
     const updatedComment = update(parentComment, comment, {
-      score: comment.score - 1
-    })
+        score: comment.score - 1
+      })
 
     updateComment(updatedComment)
   }
@@ -64,9 +64,9 @@ const CommentCard = ({
   return (
     <div className="comment">
       <div className="score-component">
-        <button disabled={voteStatus === 'upvoted'} onClick={handleUpVoteClick}>+</button>
+        <button onClick={handleUpVoteClick}>+</button>
         <span>{comment.score}</span>
-        <button disabled={voteStatus === 'downvoted'} onClick={handleDownVoteClick}>-</button>
+        <button onClick={handleDownVoteClick}>-</button>
       </div>
 
       <div className="content">
