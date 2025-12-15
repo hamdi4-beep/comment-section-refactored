@@ -53,11 +53,13 @@ const CommentCard = ({
   }
 
   const handleDeleteClick = () => {
-    updateComment(parentComment =>
-      Object.assign({}, parentComment, {
-        replies: parentComment.replies.filter(reply => reply.id !== comment.id)
-      })
-    )
+    updateComment(parentComment => {
+      if (parentComment.id === comment.id) return null
+
+      return Object.assign({}, parentComment, {
+          replies: parentComment.replies.filter(reply => reply.id !== comment.id)
+        })
+    })
   }
 
   return (
@@ -93,6 +95,8 @@ const CommentCard = ({
 
 function Comment({ parentComment }) {
   const [parentItem, setParentItem] = useState(parentComment)
+
+  if (!parentItem) return
   
   return (
     <div className="thread">
