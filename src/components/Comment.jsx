@@ -3,23 +3,22 @@ import { update } from "../utils/commentUtils"
 
 const CommentCard = ({
   comment,
-  parentComment,
   updateComment
 }) => {
   const handleUpVoteClick = () => {
-    const updatedComment = update(parentComment, comment, {
+    updateComment(parentComment =>
+      update(parentComment, comment, {
         score: comment.score + 1
       })
-
-    updateComment(updatedComment)
+    )
   }
 
   const handleDownVoteClick = () => {
-    const updatedComment = update(parentComment, comment, {
+    updateComment(parentComment =>
+      update(parentComment, comment, {
         score: comment.score - 1
       })
-
-    updateComment(updatedComment)
+    )
   }
 
   const handleReplyClick = () => {
@@ -46,11 +45,11 @@ const CommentCard = ({
   }
 
   const handleEditClick = () => {
-    const updatedComment = update(parentComment, comment, {
+    updateComment(parentComment =>
+      update(parentComment, comment, {
         content: 'edited!'
       })
-
-    updateComment(updatedComment)
+    )
   }
 
   const handleDeleteClick = () => {
@@ -99,7 +98,6 @@ function Comment({ parentComment }) {
     <div className="thread">
       <CommentCard
         comment={parentItem}
-        parentComment={null}
         updateComment={setParentItem}
       />
 
@@ -107,7 +105,6 @@ function Comment({ parentComment }) {
         {parentItem.replies.map(reply => (
           <CommentCard
             comment={reply}
-            parentComment={parentItem}
             updateComment={setParentItem}
             key={reply.id}
           />
