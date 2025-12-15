@@ -1,25 +1,24 @@
 import { useState } from "react"
+import { update } from "../utils/commentUtils"
 
 const CommentCard = ({
   comment,
   updateComment
 }) => {
   const handleUpVoteClick = () => {
-    const updatedComment = {
-      ...comment,
-      score: comment.score + 1
-    }
+    updateComment(parentComment =>
+      update(parentComment, comment, {
+        score: comment.score + 1
+      })
+    )
+  }
 
-    updateComment(prev => {
-      if (prev.id === comment.id) return updatedComment
-
-      return {
-        ...prev,
-        replies: prev.replies.map(reply =>
-          reply.id === comment.id ? updatedComment : reply
-        )
-      }
-    })
+  const handleDownVoteClick = () => {
+    updateComment(parentComment =>
+      update(parentComment, comment, {
+        score: comment.score - 1
+      })
+    )
   }
 
   const handleReplyClick = () => {
@@ -38,10 +37,27 @@ const CommentCard = ({
       }
     }
 
-    updateComment(prev => ({
-      ...prev,
-      replies: prev.replies.concat(newReply)
-    }))
+    updateComment(parentComment =>
+      Object.assign({}, parentComment, {
+        replies: parentComment.replies.concat(newReply)
+      })
+    )
+  }
+
+  const handleEditClick = () => {
+    updateComment(parentComment =>
+      update(parentComment, comment, {
+        content: 'edited!'
+      })
+    )
+  }
+
+  const handleDeleteClick = () => {
+    updateComment(parentComment =>
+      Object.assign({}, parentComment, {
+        replies: parentComment.replies.filter(reply => reply.id !== comment.id)
+      })
+    )
   }
 
   return (
@@ -49,7 +65,7 @@ const CommentCard = ({
       <div className="score-component">
         <button onClick={handleUpVoteClick}>+</button>
         <span>{comment.score}</span>
-        <button>-</button>
+        <button onClick={handleDownVoteClick}>-</button>
       </div>
 
       <div className="content">
@@ -62,6 +78,8 @@ const CommentCard = ({
 
           <div className="actions">
             <button onClick={handleReplyClick}>Reply</button>
+            <button onClick={handleEditClick}>Edit</button>
+            <button onClick={handleDeleteClick}>Delete</button>
           </div>
         </div>
 
