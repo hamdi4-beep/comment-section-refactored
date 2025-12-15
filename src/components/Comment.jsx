@@ -2,47 +2,70 @@ import { useState } from "react"
 
 const CommentCard = ({
   comment,
-  updateParent
+  updateComment
 }) => {
-  const [item, setItem] = useState(comment)
+  const handleUpVoteClick = () => {
+    const updatedComment = {
+      ...comment,
+      score: comment.score + 1
+    }
 
-  const handleUpVoteClick = () =>
-    setItem(prev => ({
-      ...prev,
-      score: prev.score + 1
-    }))
+    updateComment(prev => {
+      if (prev.id === comment.id) return updatedComment
 
-  const handleReplyClick = () => 
-    updateParent(prev => ({
-      ...prev,
-      replies: prev.replies.concat({
+      return {
         ...prev,
-        content: 'new reply'
-      })
+        replies: prev.replies.map(reply =>
+          reply.id === comment.id ? updatedComment : reply
+        )
+      }
+    })
+  }
+
+  const handleReplyClick = () => {
+    const newReply = {
+      id: "67d51541-8a74-4624-895a-638892c10d13",
+      content: "new reply",
+      createdAt: "just now",
+      score: 0,
+      replyingTo: comment.user.username,
+      user: {
+        image: { 
+          png: "./images/avatars/image-juliusomo.png",
+          webp: "./images/avatars/image-juliusomo.webp"
+        },
+        username: "juliusomo"
+      }
+    }
+
+    updateComment(prev => ({
+      ...prev,
+      replies: prev.replies.concat(newReply)
     }))
+  }
 
   return (
     <div className="comment">
       <div className="score-component">
         <button onClick={handleUpVoteClick}>+</button>
-        <span>{item.score}</span>
+        <span>{comment.score}</span>
         <button>-</button>
       </div>
 
       <div className="content">
         <div className="card-header">
           <div className="user-img">
-            <img src={item.user.image.png} alt="user avatar" />
+            <img src={comment.user.image.png} alt="user avatar" />
           </div>
 
-          <p>{item.user.username}</p>
+          <p>{comment.user.username}</p>
 
           <div className="actions">
             <button onClick={handleReplyClick}>Reply</button>
           </div>
         </div>
 
-        <p>{item.content}</p>
+        <p>{comment.content}</p>
       </div>
     </div>
   )
@@ -50,20 +73,19 @@ const CommentCard = ({
 
 function Comment({ parentComment }) {
   const [parentItem, setParentItem] = useState(parentComment)
-  console.log(parentItem)
   
   return (
     <div className="thread">
       <CommentCard
         comment={parentItem}
-        updateParent={setParentItem}
+        updateComment={setParentItem}
       />
 
       <div className="replies-list">
         {parentItem.replies.map(reply => (
           <CommentCard
             comment={reply}
-            updateParent={setParentItem}
+            updateComment={setParentItem}
             key={reply.id}
           />
         ))}
