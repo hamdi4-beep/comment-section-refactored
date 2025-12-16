@@ -1,9 +1,45 @@
+@import url('https://fonts.googleapis.com/css2?family=Rubik&display=swap');
+
 *,
 *::before,
 *::after {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
+}
+
+:root {
+    --primary-purple-600: hsl(238, 40%, 52%);
+    --primary-pink-400: hsl(358, 79%, 66%);
+    --primary-purple-200: hsl(239, 57%, 85%);
+    --primary-pink-200: hsl(357, 100%, 86%);
+
+    --neutral-grey-800: hsl(212, 24%, 26%);
+    --neutral-grey-500: hsl(211, 10%, 45%);
+    --neutral-grey-100: hsl(223, 19%, 93%);
+    --neutral-grey-50: hsl(228, 33%, 97%);
+    --neutral-white: hsl(0, 100%, 100%);
+}
+
+body {
+    background-color: var(--neutral-grey-100);
+    font-family: 'Rubik';
+    display: grid;
+    place-content: center;
+    min-height: 100vh;
+}
+
+img {
+    object-fit: cover;
+    max-width: 100%;
+}
+
+button {
+    font: inherit;
+    background: none;
+    outline: none;
+    border: none;
+    cursor: pointer;
 }
 
 .App {
@@ -13,8 +49,25 @@
     margin-inline: auto;
 }
 
+/* Comment */
+
 .card-header {
     display: flex;
+    align-items: center;
+    margin-bottom: .5em;
+}
+
+.comment-date {
+    color: var(--neutral-grey-500);
+}
+
+.actions {
+    display: flex;
+    gap: 1em;
+}
+
+.actions span {
+    margin-left: .5em;
 }
 
 .content {
@@ -26,12 +79,90 @@
 }
 
 .comment {
-    border: 1px solid black;
+    background-color: var(--neutral-white);
     padding: 1em;
     margin-bottom: 1em;
     display: flex;
+    border-radius: 10px;
+    gap: 1em;
+    align-items: flex-start;
+}
+
+.score-component {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: var(--neutral-grey-100);
+    width: 32.25px;
+    padding-block: .5em;
+    border-radius: 5px;
+}
+
+.score-component span {
+    margin-top: .3em;
+}
+
+.user {
+    display: flex;
+    align-items: center;
+    gap: .5em;
+}
+
+.user-img {
+    width: 3em;
+    height: 3em;
+}
+
+.username {
+    font-weight: bold;
 }
 
 .replies-list {
     padding-left: 1em;
+}
+
+/* Form */
+
+.form-component {
+    display: flex;
+    align-items: flex-start;
+    gap: 1em;
+    background-color: var(--neutral-white);
+    padding: 1em;
+    border-radius: 10px;
+    margin-bottom: 1em;
+}
+
+.wrapper .form-component {
+    margin-top: calc(-1em - 5px);
+    padding-top: 1em;
+    border-top: 1px solid var(--neutral-grey-100);
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+
+.form-component form {
+    display: flex;
+    align-items: flex-start;
+    width: 100%;
+}
+
+.form-component textarea {
+    border: 1px solid var(--neutral-grey-100);
+    padding: 1em;
+    padding-bottom: 5em;
+    width: 100%;
+    border-radius: 5px;
+    font: inherit;
+    outline: none;
+}
+
+.form-component .cta {
+    background-color: var(--primary-purple-600);
+    padding: .5em 1em;
+    border-radius: 5px;
+    vertical-align: top;
+    margin-left: 1em;
+    color: var(--neutral-white);
+    text-transform: uppercase;
 }

@@ -1,5 +1,6 @@
 import Comment from './Comment'
 import comments from '../../data/comments.json'
+import FormComponent from './FormComponent'
 
 function CommentsList() {
     return (
@@ -10,6 +11,8 @@ function CommentsList() {
                     key={comment.id}
                 />
             ))}
+
+            <FormComponent />
         </div>
     )
 }

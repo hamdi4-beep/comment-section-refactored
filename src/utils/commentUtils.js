@@ -1,4 +1,4 @@
-export const update = (parentComment, targetComment, props) => {
+export const createUpdatedComment = (parentComment, targetComment, props) => {
   const updatedComment = Object.assign({}, targetComment, props)
 
   if (parentComment.id === targetComment.id) return updatedComment
