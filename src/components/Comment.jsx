@@ -6,8 +6,7 @@ const CommentCard = ({
   comment,
   updateComment
 }) => {
-  const [isReplying, setIsReplying] = useState(false)
-  const [isEditing, setIsEditing] = useState(false)
+  const [formStatus, setFormStatus] = useState(null)
 
   const handleUpVoteClick = () => {
     updateComment(parentComment =>
@@ -32,7 +31,7 @@ const CommentCard = ({
       })
     )
 
-    setIsEditing(false)
+    setFormStatus(null)
   }
 
   const handleDeleteClick = () => {
@@ -67,7 +66,7 @@ const CommentCard = ({
       })
     )
 
-    setIsReplying(false)
+    setFormStatus(null)
   }
 
   return (
@@ -97,12 +96,12 @@ const CommentCard = ({
             </div>
 
             <div className="actions">
-              <button onClick={() => setIsReplying(prev => !prev)}>
+              <button onClick={() => setFormStatus('replying')}>
                 <img src="/images/icon-reply.svg" alt="" />
                 <span>Reply</span>
               </button>
 
-              <button onClick={() => setIsEditing(prev => !prev)}>
+              <button onClick={() => setFormStatus('editing')}>
                 <img src="/images/icon-edit.svg" alt="" />
                 <span>Edit</span>
               </button>
@@ -118,11 +117,11 @@ const CommentCard = ({
         </div>
       </div>
 
-      {isReplying && (
+      {formStatus === 'replying' && (
         <FormComponent triggerUpdate={createReply} />
       )}
 
-      {isEditing && (
+      {formStatus === 'editing' && (
         <FormComponent
           value={comment.content}
           triggerUpdate={editComment}
