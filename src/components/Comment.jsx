@@ -7,21 +7,26 @@ const CommentCard = ({
   updateParentComment
 }) => {
   const [formStatus, setFormStatus] = useState(null)
+  const [voteStatus, setVoteStatus] = useState(null)
   // mimicks user authentication - just for demo purposes
   const isCurrentUser = comment.user.username === 'juliusomo'
 
   const handleUpVoteClick = () => {
+    setVoteStatus('upvoted')
+
     updateParentComment(parentComment =>
       createUpdatedComment(parentComment, comment, {
-        score: comment.score + 1
+        score: voteStatus === 'upvoted' ? comment.score : comment.score + 1
       })
     )
   }
 
   const handleDownVoteClick = () => {
+    setVoteStatus('downvoted')
+
     updateParentComment(parentComment =>
       createUpdatedComment(parentComment, comment, {
-        score: comment.score - 1
+        score: voteStatus === 'downvoted' ? comment.score : comment.score - 1
       })
     )
   }
