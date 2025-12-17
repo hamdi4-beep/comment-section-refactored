@@ -4,12 +4,12 @@ import FormComponent from "./FormComponent"
 
 const CommentCard = ({
   comment,
-  updateComment
+  updateParentComment
 }) => {
   const [formStatus, setFormStatus] = useState(null)
 
   const handleUpVoteClick = () => {
-    updateComment(parentComment =>
+    updateParentComment(parentComment =>
       createUpdatedComment(parentComment, comment, {
         score: comment.score + 1
       })
@@ -17,7 +17,7 @@ const CommentCard = ({
   }
 
   const handleDownVoteClick = () => {
-    updateComment(parentComment =>
+    updateParentComment(parentComment =>
       createUpdatedComment(parentComment, comment, {
         score: comment.score - 1
       })
@@ -25,7 +25,7 @@ const CommentCard = ({
   }
 
   const editComment = content => {
-    updateComment(parentComment =>
+    updateParentComment(parentComment =>
       createUpdatedComment(parentComment, comment, {
         content
       })
@@ -35,7 +35,7 @@ const CommentCard = ({
   }
 
   const handleDeleteClick = () => {
-    updateComment(parentComment => {
+    updateParentComment(parentComment => {
       if (parentComment.id === comment.id) return null
 
       return Object.assign({}, parentComment, {
@@ -60,7 +60,7 @@ const CommentCard = ({
       }
     }
 
-    updateComment(parentComment =>
+    updateParentComment(parentComment =>
       Object.assign({}, parentComment, {
         replies: parentComment.replies.concat(newReply)
       })
@@ -96,12 +96,12 @@ const CommentCard = ({
             </div>
 
             <div className="actions">
-              <button onClick={() => setFormStatus('replying')}>
+              <button onClick={() => setFormStatus(prev => prev === 'replying' ? null : 'replying')}>
                 <img src="/images/icon-reply.svg" alt="" />
                 <span>Reply</span>
               </button>
 
-              <button onClick={() => setFormStatus('editing')}>
+              <button onClick={() => setFormStatus(prev => prev === 'editing' ? null : 'editing')}>
                 <img src="/images/icon-edit.svg" alt="" />
                 <span>Edit</span>
               </button>
@@ -131,23 +131,23 @@ const CommentCard = ({
   )
 }
 
-function Comment({ parentComment }) {
-  const [parentItem, setParentItem] = useState(parentComment)
+function Comment({ comment }) {
+  const [parentComment, setParentComment] = useState(comment)
 
-  if (!parentItem) return
+  if (!parentComment) return
   
   return (
     <div className="thread">
       <CommentCard
-        comment={parentItem}
-        updateComment={setParentItem}
+        comment={parentComment}
+        updateParentComment={setParentComment}
       />
 
       <div className="replies-list">
         {parentItem.replies.map(reply => (
           <CommentCard
             comment={reply}
-            updateComment={setParentItem}
+            updateParentComment={setParentComment}
             key={reply.id}
           />
         ))}

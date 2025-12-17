@@ -5,10 +5,10 @@ import FormComponent from './FormComponent'
 function CommentsList() {
     return (
         <div className="comments-list">
-            {comments.map(comment => (
+            {comments.map(parentComment => (
                 <Comment
-                    parentComment={comment}
-                    key={comment.id}
+                    comment={parentComment}
+                    key={parentComment.id}
                 />
             ))}
 
