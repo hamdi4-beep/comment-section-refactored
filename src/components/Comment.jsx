@@ -2,12 +2,27 @@ import { useState } from "react"
 import { createUpdatedComment } from "../utils/commentUtils"
 import FormComponent from "./FormComponent"
 
+const DeleteModal = () => {
+  return (
+    <div className="delete-modal">
+      <p>Delete comment</p>
+      <span>Are you sure you want to delete this comment? This will remove the comment and can't be undone.</span>
+      
+      <div className="action-buttons">
+        <button className="cancel-action">No, Cancel</button>
+        <button className="delete-action">Yes, Delete</button>
+      </div>
+    </div>
+  )
+}
+
 const CommentCard = ({
   comment,
   updateParentComment
 }) => {
   const [formStatus, setFormStatus] = useState(null)
   const [voteStatus, setVoteStatus] = useState(null)
+  const [isModalHidden, setIsModalHidden] = useState(true)
   // mimicks user authentication - just for demo purposes
   const isCurrentUser = comment.user.username === 'juliusomo'
 
@@ -118,7 +133,7 @@ const CommentCard = ({
               )}
 
               {isCurrentUser && (
-                <button onClick={handleDeleteClick}>
+                <button onClick={() => setIsModalHidden(false)}>
                   <img src="/images/icon-delete.svg" alt="" />
                   <span className="delete-label">Delete</span>
                 </button>
@@ -145,6 +160,10 @@ const CommentCard = ({
           value={comment.content}
           triggerUpdate={editComment}
         />
+      )}
+
+      {!isModalHidden && (
+        <DeleteModal />
       )}
     </div>
   )

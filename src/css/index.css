@@ -29,6 +29,15 @@ body {
     min-height: 100vh;
 }
 
+body:has(.delete-modal)::after {
+    content: '';
+    display: block;
+    position: fixed;
+    inset: 0;
+    background-color: black;
+    opacity: .5;
+}
+
 img {
     object-fit: cover;
     max-width: 100%;
@@ -57,7 +66,7 @@ button {
     margin-bottom: .5em;
 }
 
-.comment-date {
+.comment-date, .delete-modal span {
     color: var(--neutral-grey-500);
 }
 
@@ -182,4 +191,41 @@ button {
     margin-left: 1em;
     color: var(--neutral-white);
     text-transform: uppercase;
+}
+
+.delete-modal {
+    background-color: white;
+    position: fixed;
+    z-index: 999;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    padding: 1.5em;
+    border-radius: 20px;
+}
+
+.delete-modal p {
+    margin-bottom: 1em;
+    font-weight: bold;
+    font-size: larger;
+}
+
+.action-buttons {
+    margin-top: 1.5em;
+}
+
+.action-buttons button {
+    text-transform: uppercase;
+    padding: 1em 2em;
+    color: var(--neutral-white);
+    border-radius: 5px;
+}
+
+button.cancel-action {
+    background-color: var(--neutral-grey-500);
+    margin-right: .5em;
+}
+
+button.delete-action {
+    background-color: var(--primary-pink-400);
 }
