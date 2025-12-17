@@ -7,6 +7,8 @@ const CommentCard = ({
   updateParentComment
 }) => {
   const [formStatus, setFormStatus] = useState(null)
+  // mimicks user authentication - just for demo purposes
+  const isCurrentUser = comment.user.username === 'juliusomo'
 
   const handleUpVoteClick = () => {
     updateParentComment(parentComment =>
@@ -96,20 +98,26 @@ const CommentCard = ({
             </div>
 
             <div className="actions">
-              <button onClick={() => setFormStatus(prev => prev === 'replying' ? null : 'replying')}>
-                <img src="/images/icon-reply.svg" alt="" />
-                <span>Reply</span>
-              </button>
+              {!isCurrentUser && (
+                <button onClick={() => setFormStatus(prev => prev === 'replying' ? null : 'replying')}>
+                  <img src="/images/icon-reply.svg" alt="" />
+                  <span>Reply</span>
+                </button>
+              )}
 
-              <button onClick={() => setFormStatus(prev => prev === 'editing' ? null : 'editing')}>
-                <img src="/images/icon-edit.svg" alt="" />
-                <span>Edit</span>
-              </button>
+              {isCurrentUser && (
+                <button onClick={() => setFormStatus(prev => prev === 'editing' ? null : 'editing')}>
+                  <img src="/images/icon-edit.svg" alt="" />
+                  <span>Edit</span>
+                </button>
+              )}
 
-              <button onClick={handleDeleteClick}>
-                <img src="/images/icon-delete.svg" alt="" />
-                <span>Delete</span>
-              </button>
+              {isCurrentUser && (
+                <button onClick={handleDeleteClick}>
+                  <img src="/images/icon-delete.svg" alt="" />
+                  <span>Delete</span>
+                </button>
+              )}
             </div>
           </div>
 
