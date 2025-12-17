@@ -2,15 +2,18 @@ import { useState } from "react"
 import { createUpdatedComment } from "../utils/commentUtils"
 import FormComponent from "./FormComponent"
 
-const DeleteModal = () => {
+const DeleteModal = ({
+  hideModal,
+  deleteComment
+}) => {
   return (
     <div className="delete-modal">
       <p>Delete comment</p>
       <span>Are you sure you want to delete this comment? This will remove the comment and can't be undone.</span>
       
       <div className="action-buttons">
-        <button className="cancel-action">No, Cancel</button>
-        <button className="delete-action">Yes, Delete</button>
+        <button className="cancel-action" onClick={hideModal}>No, Cancel</button>
+        <button className="delete-action" onClick={deleteComment}>Yes, Delete</button>
       </div>
     </div>
   )
@@ -56,7 +59,7 @@ const CommentCard = ({
     setFormStatus(null)
   }
 
-  const handleDeleteClick = () => {
+  const deleteComment = () => {
     updateParentComment(parentComment => {
       if (parentComment.id === comment.id) return null
 
@@ -163,7 +166,10 @@ const CommentCard = ({
       )}
 
       {!isModalHidden && (
-        <DeleteModal />
+        <DeleteModal
+          hideModal={() => setIsModalHidden(true)}
+          deleteComment={deleteComment}
+        />
       )}
     </div>
   )
