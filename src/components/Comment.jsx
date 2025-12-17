@@ -2,23 +2,6 @@ import { useState } from "react"
 import { createUpdatedComment } from "../utils/commentUtils"
 import FormComponent from "./FormComponent"
 
-const DeleteModal = ({
-  hideModal,
-  deleteComment
-}) => {
-  return (
-    <div className="delete-modal">
-      <p>Delete comment</p>
-      <span>Are you sure you want to delete this comment? This will remove the comment and can't be undone.</span>
-      
-      <div className="action-buttons">
-        <button className="cancel-action" onClick={hideModal}>No, Cancel</button>
-        <button className="delete-action" onClick={deleteComment}>Yes, Delete</button>
-      </div>
-    </div>
-  )
-}
-
 const CommentCard = ({
   comment,
   updateParentComment
@@ -49,6 +32,16 @@ const CommentCard = ({
     )
   }
 
+  const handleDeleteComment = () => {
+    updateParentComment(parentComment => {
+      if (parentComment.id === comment.id) return null
+
+      return Object.assign({}, parentComment, {
+          replies: parentComment.replies.filter(reply => reply.id !== comment.id)
+        })
+    })
+  }
+
   const editComment = content => {
     updateParentComment(parentComment =>
       createUpdatedComment(parentComment, comment, {
@@ -57,16 +50,6 @@ const CommentCard = ({
     )
 
     setFormStatus(null)
-  }
-
-  const deleteComment = () => {
-    updateParentComment(parentComment => {
-      if (parentComment.id === comment.id) return null
-
-      return Object.assign({}, parentComment, {
-          replies: parentComment.replies.filter(reply => reply.id !== comment.id)
-        })
-    })
   }
 
   const createReply = content => {
@@ -166,10 +149,15 @@ const CommentCard = ({
       )}
 
       {!isModalHidden && (
-        <DeleteModal
-          hideModal={() => setIsModalHidden(true)}
-          deleteComment={deleteComment}
-        />
+        <div className="delete-modal">
+          <p>Delete comment</p>
+          <span>Are you sure you want to delete this comment? This will remove the comment and can't be undone.</span>
+          
+          <div className="action-buttons">
+            <button className="cancel-action" onClick={() => setIsModalHidden(true)}>No, Cancel</button>
+            <button className="delete-action" onClick={handleDeleteComment}>Yes, Delete</button>
+          </div>
+        </div>
       )}
     </div>
   )
