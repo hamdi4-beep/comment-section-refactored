@@ -15,8 +15,8 @@ const CommentCard = ({
   const handleUpVoteClick = () => {
     setVoteStatus('upvoted')
 
-    updateParentComment(parentComment =>
-      createUpdatedComment(parentComment, comment, {
+    updateParentComment(prev =>
+      createUpdatedComment(prev, comment, {
         score: voteStatus === 'upvoted' ? comment.score : comment.score + 1
       })
     )
@@ -25,26 +25,26 @@ const CommentCard = ({
   const handleDownVoteClick = () => {
     setVoteStatus('downvoted')
 
-    updateParentComment(parentComment =>
-      createUpdatedComment(parentComment, comment, {
+    updateParentComment(prev =>
+      createUpdatedComment(prev, comment, {
         score: voteStatus === 'downvoted' ? comment.score : comment.score - 1
       })
     )
   }
 
   const handleDeleteComment = () => {
-    updateParentComment(parentComment => {
-      if (parentComment.id === comment.id) return null
+    updateParentComment(prev => {
+      if (prev.id === comment.id) return null
 
-      return Object.assign({}, parentComment, {
-          replies: parentComment.replies.filter(reply => reply.id !== comment.id)
+      return Object.assign({}, prev, {
+          replies: prev.replies.filter(reply => reply.id !== comment.id)
         })
     })
   }
 
   const editComment = content => {
-    updateParentComment(parentComment =>
-      createUpdatedComment(parentComment, comment, {
+    updateParentComment(prev =>
+      createUpdatedComment(prev, comment, {
         content
       })
     )
@@ -68,9 +68,9 @@ const CommentCard = ({
       }
     }
 
-    updateParentComment(parentComment =>
-      Object.assign({}, parentComment, {
-        replies: parentComment.replies.concat(newReply)
+    updateParentComment(prev =>
+      Object.assign({}, prev, {
+        replies: prev.replies.concat(newReply)
       })
     )
 
