@@ -126,7 +126,13 @@ const CommentCard = ({
             </div>
           </div>
 
-          <p>{comment.content}</p>
+          <p>
+            {comment.replyingTo && (
+              <span className="replying-to">@{comment.replyingTo} </span>
+            )}
+
+            {comment.content}
+          </p>
         </div>
       </div>
 
