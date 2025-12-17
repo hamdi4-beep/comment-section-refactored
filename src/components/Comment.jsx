@@ -84,7 +84,7 @@ const CommentCard = ({
             <img src="/images/icon-plus.svg" alt="" />
           </button>
 
-          <span>{comment.score}</span>
+          <span className="comment-score">{comment.score}</span>
 
           <button onClick={handleDownVoteClick}>
             <img src="/images/icon-minus.svg" alt="" />
@@ -106,21 +106,21 @@ const CommentCard = ({
               {!isCurrentUser && (
                 <button onClick={() => setFormStatus(prev => prev === 'replying' ? null : 'replying')}>
                   <img src="/images/icon-reply.svg" alt="" />
-                  <span>Reply</span>
+                  <span className="reply-label">Reply</span>
                 </button>
               )}
 
               {isCurrentUser && (
                 <button onClick={() => setFormStatus(prev => prev === 'editing' ? null : 'editing')}>
                   <img src="/images/icon-edit.svg" alt="" />
-                  <span>Edit</span>
+                  <span className="edit-label">Edit</span>
                 </button>
               )}
 
               {isCurrentUser && (
                 <button onClick={handleDeleteClick}>
                   <img src="/images/icon-delete.svg" alt="" />
-                  <span>Delete</span>
+                  <span className="delete-label">Delete</span>
                 </button>
               )}
             </div>
