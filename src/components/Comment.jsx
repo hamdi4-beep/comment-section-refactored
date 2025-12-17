@@ -144,7 +144,7 @@ function Comment({ comment }) {
       />
 
       <div className="replies-list">
-        {parentItem.replies.map(reply => (
+        {parentComment.replies.map(reply => (
           <CommentCard
             comment={reply}
             updateParentComment={setParentComment}
