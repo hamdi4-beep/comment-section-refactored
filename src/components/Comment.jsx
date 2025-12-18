@@ -1,4 +1,3 @@
-import { useState } from "react"
 import CommentCard from "./CommentCard"
 
 function Comment({
