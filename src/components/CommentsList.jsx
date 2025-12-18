@@ -6,6 +6,25 @@ import { useState } from 'react'
 function CommentsList() {
     const [items, setItems] = useState(comments)
 
+    const createComment = content => {
+        const newComment = {
+            id: "67d51541-8a74-4624-895a-638892c10d13",
+            content,
+            createdAt: "just now",
+            score: 0,
+            user: {
+                image: { 
+                png: "./images/avatars/image-juliusomo.png",
+                webp: "./images/avatars/image-juliusomo.webp"
+                },
+                username: "juliusomo"
+            },
+            replies: []
+        }
+
+        setItems(prev => [...prev, newComment])
+    }
+
     return (
         <div className="comments-list">
             {items.map(parentComment => (
@@ -16,7 +35,7 @@ function CommentsList() {
                 />
             ))}
 
-            <FormComponent triggerUpdate={() => console.log('add a new comment')} />
+            <FormComponent triggerUpdate={createComment} />
         </div>
     )
 }

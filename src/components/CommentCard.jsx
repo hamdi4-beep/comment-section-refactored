@@ -38,15 +38,20 @@ function CommentCard({
   }
 
   const handleDeleteComment = () => {
-    updateComments(prev =>
-      prev.map(parentComment => {
-        if (parentComment.id === comment.id) return parentComment === comment.id
+    updateComments(prev => {
+      if (!parentComment)
+        return prev.filter(parentItem => parentItem.id !== comment.id)
+      
+      return prev.map(parentItem => {
+        if (parentComment?.id === parentItem.id) {
+          return Object.assign({}, parentComment, {
+            replies: parentComment.replies.filter(reply => reply.id !== comment.id)
+          })
+        }
 
-        return Object.assign({}, parentComment, {
-          replies: parentComment.replies.filter(reply => reply.id !== comment.id)
-        })
+        return parentItem
       })
-    )
+    })
   }
 
   const editComment = content => {
