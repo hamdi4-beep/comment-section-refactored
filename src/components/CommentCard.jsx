@@ -84,7 +84,7 @@ function CommentCard({
 
     updateComments(prev =>
       prev.map(parentItem => {
-        const targetComment = parentComment || comment
+        const targetComment = parentComment ?? comment
 
         if (targetComment.id === parentItem.id) {
           return Object.assign({}, targetComment, {
