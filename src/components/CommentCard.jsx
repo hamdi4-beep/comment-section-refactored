@@ -4,7 +4,8 @@ import FormComponent from "./FormComponent"
 
 function CommentCard({
   comment,
-  updateParentComment
+  parentComment,
+  updateComments
 }) {
   const [formStatus, setFormStatus] = useState(null)
   const [voteStatus, setVoteStatus] = useState(null)
@@ -15,31 +16,37 @@ function CommentCard({
   const handleUpVoteClick = () => {
     setVoteStatus('upvoted')
 
-    updateParentComment(prev =>
-      createUpdatedComment(prev, comment, {
-        score: voteStatus === 'upvoted' ? comment.score : comment.score + 1
-      })
+    updateComments(prev =>
+      prev.map(parentComment =>
+        createUpdatedComment(parentComment, comment, {
+          score: voteStatus === 'upvoted' ? comment.score : comment.score + 1
+        })
+      )
     )
   }
 
   const handleDownVoteClick = () => {
     setVoteStatus('downvoted')
 
-    updateParentComment(prev =>
-      createUpdatedComment(prev, comment, {
-        score: voteStatus === 'downvoted' ? comment.score : comment.score - 1
-      })
+    updateComments(prev =>
+      prev.map(parentComment =>
+        createUpdatedComment(parentComment, comment, {
+          score: voteStatus === 'downvoted' ? comment.score : comment.score - 1
+        })
+      )
     )
   }
 
   const handleDeleteComment = () => {
-    updateParentComment(prev => {
-      if (prev.id === comment.id) return null
+    updateComments(prev =>
+      prev.map(parentComment => {
+        if (parentComment.id === comment.id) return parentComment === comment.id
 
-      return Object.assign({}, prev, {
-          replies: prev.replies.filter(reply => reply.id !== comment.id)
+        return Object.assign({}, parentComment, {
+          replies: parentComment.replies.filter(reply => reply.id !== comment.id)
         })
-    })
+      })
+    )
   }
 
   const editComment = content => {
@@ -68,9 +75,17 @@ function CommentCard({
       }
     }
 
-    updateParentComment(prev =>
-      Object.assign({}, prev, {
-        replies: prev.replies.concat(newReply)
+    updateComments(prev =>
+      prev.map(parentItem => {
+        const targetComment = parentComment || comment
+
+        if (targetComment.id === parentItem.id) {
+          return Object.assign({}, targetComment, {
+            replies: targetComment.replies.concat(newReply)
+          })
+        }
+
+        return parentItem
       })
     )
 

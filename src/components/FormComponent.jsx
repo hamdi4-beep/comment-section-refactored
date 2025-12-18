@@ -1,11 +1,11 @@
+import { useRef } from "react"
 import { useEffect } from "react"
-import { createRef } from "react"
 
 function FormComponent({
     value = '',
     triggerUpdate
 }) {
-    const textAreaRef = createRef()
+    const textAreaRef = useRef(null)
 
     useEffect(() => {
         const {current} = textAreaRef
@@ -14,9 +14,13 @@ function FormComponent({
 
     const handleSubmit = e => {
         e.preventDefault()
+        
         const formData = new FormData(e.currentTarget)
         const comment = formData.get('comment')
-        if (comment) triggerUpdate(comment)
+        
+        if (comment) {
+            triggerUpdate(comment)
+        }
     }
 
     return (

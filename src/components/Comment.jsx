@@ -1,23 +1,26 @@
 import { useState } from "react"
 import CommentCard from "./CommentCard"
 
-function Comment({ comment }) {
-  const [parentComment, setParentComment] = useState(comment)
-
+function Comment({
+  parentComment,
+  updateComments
+}) {
   if (!parentComment) return
   
   return (
     <div className="thread">
       <CommentCard
         comment={parentComment}
-        updateParentComment={setParentComment}
+        parentComment={null}
+        updateComments={updateComments}
       />
 
       <div className="replies-list">
         {parentComment.replies.map(reply => (
           <CommentCard
             comment={reply}
-            updateParentComment={setParentComment}
+            parentComment={parentComment}
+            updateComments={updateComments}
             key={reply.id}
           />
         ))}
