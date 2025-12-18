@@ -55,10 +55,12 @@ function CommentCard({
   }
 
   const editComment = content => {
-    updateParentComment(prev =>
-      createUpdatedComment(prev, comment, {
-        content
-      })
+    updateComments(prev =>
+      prev.map(parentItem =>
+        createUpdatedComment(parentItem, comment, {
+          content
+        })
+      )
     )
 
     setFormStatus(null)
