@@ -199,6 +199,7 @@ button {
     z-index: 999;
     left: 50%;
     top: 50%;
+    width: 25rem;
     transform: translate(-50%, -50%);
     padding: 1.5em;
     border-radius: 20px;
@@ -212,6 +213,7 @@ button {
 
 .action-buttons {
     margin-top: 1.5em;
+    display: flex;
 }
 
 .action-buttons button {
@@ -219,6 +221,7 @@ button {
     padding: 1em 2em;
     color: var(--neutral-white);
     border-radius: 5px;
+    width: 100%;
 }
 
 button.cancel-action {
