@@ -4,8 +4,6 @@ function Comment({
   parentComment,
   updateComments
 }) {
-  if (!parentComment) return
-  
   return (
     <div className="thread">
       <CommentCard
