@@ -5,26 +5,25 @@ import { useState } from 'react'
 
 function CommentsList() {
     const [items, setItems] = useState(comments)
-    const allCommentIds = items.map(item => item.id)
+    const newId = Math.max.apply(null, items.map(item => item.id)) + 1
 
-    const createComment = content => {
-        const newComment = {
-            id: Math.max.apply(null, allCommentIds) + 1,
-            content,
-            createdAt: "just now",
-            score: 0,
-            user: {
-                image: { 
-                png: "./images/avatars/image-juliusomo.png",
-                webp: "./images/avatars/image-juliusomo.webp"
+    const createComment = content =>
+        setItems(prev =>
+            [...prev, {
+                id: newId,
+                content,
+                createdAt: "just now",
+                score: 0,
+                user: {
+                    image: { 
+                    png: "./images/avatars/image-juliusomo.png",
+                    webp: "./images/avatars/image-juliusomo.webp"
+                    },
+                    username: "juliusomo"
                 },
-                username: "juliusomo"
-            },
-            replies: []
-        }
-
-        setItems(prev => [...prev, newComment])
-    }
+                replies: []
+            }]
+        )
 
     return (
         <div className="comments-list">

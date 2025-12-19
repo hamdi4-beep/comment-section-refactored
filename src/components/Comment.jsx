@@ -17,8 +17,8 @@ function Comment({
     setVoteStatus('upvoted')
 
     updateComments(prev =>
-      prev.map(parentComment =>
-        createUpdatedComment(parentComment, comment, {
+      prev.map(parentItem =>
+        createUpdatedComment(parentItem, comment, {
           score: voteStatus === 'upvoted' ? comment.score : comment.score + 1
         })
       )
@@ -29,8 +29,8 @@ function Comment({
     setVoteStatus('downvoted')
 
     updateComments(prev =>
-      prev.map(parentComment =>
-        createUpdatedComment(parentComment, comment, {
+      prev.map(parentItem =>
+        createUpdatedComment(parentItem, comment, {
           score: voteStatus === 'downvoted' ? comment.score : comment.score - 1
         })
       )
@@ -43,11 +43,10 @@ function Comment({
         return prev.filter(parentItem => parentItem.id !== comment.id)
       
       return prev.map(parentItem => {
-        if (parentComment?.id === parentItem.id) {
-          return Object.assign({}, parentComment, {
-            replies: parentComment.replies.filter(reply => reply.id !== comment.id)
+        if (parentComment.id === parentItem.id)
+          return Object.assign({}, parentItem, {
+            replies: parentItem.replies.filter(reply => reply.id !== comment.id)
           })
-        }
 
         return parentItem
       })
