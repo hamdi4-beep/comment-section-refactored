@@ -5,10 +5,11 @@ import { useState } from 'react'
 
 function CommentsList() {
     const [items, setItems] = useState(comments)
+    const allCommentIds = items.map(item => item.id)
 
     const createComment = content => {
         const newComment = {
-            id: "67d51541-8a74-4624-895a-638892c10d13",
+            id: Math.max.apply(null, allCommentIds) + 1,
             content,
             createdAt: "just now",
             score: 0,

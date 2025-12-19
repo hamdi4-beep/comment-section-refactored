@@ -67,8 +67,10 @@ function CommentCard({
   }
 
   const createReply = content => {
+    const targetComment = parentComment ?? comment
+
     const newReply = {
-      id: "67d51541-8a74-4624-895a-638892c10d13",
+      id: Math.max.apply(null, targetComment.replies.map(reply => reply.id)) + 1,
       content,
       createdAt: "just now",
       score: 0,
@@ -84,13 +86,10 @@ function CommentCard({
 
     updateComments(prev =>
       prev.map(parentItem => {
-        const targetComment = parentComment ?? comment
-
-        if (targetComment.id === parentItem.id) {
+        if (targetComment.id === parentItem.id)
           return Object.assign({}, targetComment, {
             replies: targetComment.replies.concat(newReply)
           })
-        }
 
         return parentItem
       })
