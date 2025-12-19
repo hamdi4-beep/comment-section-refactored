@@ -1,4 +1,4 @@
-import Comment from './Comment'
+import Thread from './Thread'
 import comments from '../../data/comments.json'
 import FormComponent from './FormComponent'
 import { useState } from 'react'
@@ -29,7 +29,7 @@ function CommentsList() {
     return (
         <div className="comments-list">
             {items.map(parentComment => (
-                <Comment
+                <Thread
                     parentComment={parentComment}
                     updateComments={setItems}
                     key={parentComment.id}
