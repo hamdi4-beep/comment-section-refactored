@@ -2,6 +2,8 @@ import { useState } from "react"
 import { createUpdatedComment } from "../utils/commentUtils"
 import FormComponent from "./FormComponent"
 
+// add new ID generation reply
+
 function Comment({
   comment,
   parentComment,
@@ -69,7 +71,7 @@ function Comment({
     const targetComment = parentComment ?? comment
 
     const newReply = {
-      id: Math.max.apply(null, targetComment.replies.map(reply => reply.id)) + 1,
+      id: 5,
       content,
       createdAt: "just now",
       score: 0,
