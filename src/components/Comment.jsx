@@ -45,9 +45,9 @@ function Comment({
         return prev.filter(parentItem => parentItem.id !== comment.id)
       
       return prev.map(parentItem => {
-        if (parentComment.id === parentItem.id)
-          return Object.assign({}, parentItem, {
-            replies: parentItem.replies.filter(reply => reply.id !== comment.id)
+        if (parentItem.id === parentComment.id)
+          return Object.assign({}, parentComment, {
+            replies: parentComment.replies.filter(reply => reply.id !== comment.id)
           })
 
         return parentItem
@@ -87,7 +87,7 @@ function Comment({
 
     updateComments(prev =>
       prev.map(parentItem => {
-        if (targetComment.id === parentItem.id)
+        if (parentItem.id === targetComment.id)
           return Object.assign({}, targetComment, {
             replies: targetComment.replies.concat(newReply)
           })
