@@ -5,12 +5,11 @@ import { useState } from 'react'
 
 function CommentsList() {
     const [items, setItems] = useState(comments)
-    const newId = Math.max.apply(null, items.map(item => item.id)) + 1
 
     const createComment = content =>
         setItems(prev =>
             [...prev, {
-                id: newId,
+                id: crypto.randomUUID(),
                 content,
                 createdAt: "just now",
                 score: 0,

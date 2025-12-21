@@ -71,7 +71,7 @@ function Comment({
     const targetComment = parentComment ?? comment
 
     const newReply = {
-      id: 5,
+      id: crypto.randomUUID(),
       content,
       createdAt: "just now",
       score: 0,
