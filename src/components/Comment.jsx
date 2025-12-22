@@ -72,8 +72,8 @@ function Comment({
       replyingTo: comment.user.username,
       user: {
         image: { 
-          png: "./images/avatars/image-juliusomo.png",
-          webp: "./images/avatars/image-juliusomo.webp"
+          png: import.meta.env.BASE_URL + "/images/avatars/image-juliusomo.png",
+          webp: import.meta.env.BASE_URL + "/images/avatars/image-juliusomo.webp"
         },
         username: "juliusomo"
       }
@@ -98,13 +98,13 @@ function Comment({
       <div className="comment">
         <div className="score-component">
           <button onClick={handleUpVoteClick}>
-            <img src="/images/icon-plus.svg" alt="" />
+            <img src={import.meta.env.BASE_URL + '/images/icon-plus.svg'} alt="" />
           </button>
 
           <span className="comment-score">{comment.score}</span>
 
           <button onClick={handleDownVoteClick}>
-            <img src="/images/icon-minus.svg" alt="" />
+            <img src={import.meta.env.BASE_URL + '/images/icon-minus.svg'} alt="" />
           </button>
         </div>
 
@@ -112,7 +112,7 @@ function Comment({
           <div className="card-header">
             <div className="user">
               <div className="user-img">
-                <img src={comment.user.image.png} alt="user avatar" />
+                <img src={`${import.meta.env.BASE_URL + comment.user.image.png}`} alt="user avatar" />
               </div>
 
               <p className="username">{comment.user.username}</p>
@@ -122,21 +122,21 @@ function Comment({
             <div className="actions">
               {!isCurrentUser && (
                 <button onClick={() => setFormStatus(prev => prev === 'replying' ? null : 'replying')}>
-                  <img src="/images/icon-reply.svg" alt="" />
+                  <img src={import.meta.env.BASE_URL + '/images/icon-reply.svg'} alt="" />
                   <span className="reply-label">Reply</span>
                 </button>
               )}
 
               {isCurrentUser && (
                 <button onClick={() => setFormStatus(prev => prev === 'editing' ? null : 'editing')}>
-                  <img src="/images/icon-edit.svg" alt="" />
+                  <img src={import.meta.env.BASE_URL + '/images/icon-edit.svg'} alt="" />
                   <span className="edit-label">Edit</span>
                 </button>
               )}
 
               {isCurrentUser && (
                 <button onClick={() => setIsModalHidden(false)}>
-                  <img src="/images/icon-delete.svg" alt="" />
+                  <img src={import.meta.env.BASE_URL + '/images/icon-delete.svg'} alt="" />
                   <span className="delete-label">Delete</span>
                 </button>
               )}

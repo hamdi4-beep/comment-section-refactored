@@ -26,7 +26,7 @@ function FormComponent({
     return (
         <div className="form-component">
             <div className="user-img">
-                <img src="/images/avatars/image-juliusomo.png" alt="" />
+                <img src={import.meta.env.BASE_URL + '/images/avatars/image-juliusomo.png'} alt="" />
             </div>
 
             <form action="#" onSubmit={handleSubmit}>
