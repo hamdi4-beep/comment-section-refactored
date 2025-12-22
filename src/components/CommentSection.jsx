@@ -16,8 +16,8 @@ function CommentSection() {
                 score: 0,
                 user: {
                     image: { 
-                        png: import.meta.env.BASE_URL + "/images/avatars/image-juliusomo.png",
-                        webp: import.meta.env.BASE_URL + "/images/avatars/image-juliusomo.webp"
+                        png: "/images/avatars/image-juliusomo.png",
+                        webp: "/images/avatars/image-juliusomo.webp"
                     },
                     username: "juliusomo"
                 },

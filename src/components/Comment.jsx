@@ -72,8 +72,8 @@ function Comment({
       replyingTo: comment.user.username,
       user: {
         image: { 
-          png: import.meta.env.BASE_URL + "/images/avatars/image-juliusomo.png",
-          webp: import.meta.env.BASE_URL + "/images/avatars/image-juliusomo.webp"
+          png: "/images/avatars/image-juliusomo.png",
+          webp: "/images/avatars/image-juliusomo.webp"
         },
         username: "juliusomo"
       }
