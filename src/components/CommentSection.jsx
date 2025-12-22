@@ -1,13 +1,13 @@
 import Thread from './Thread'
-import comments from '../../data/comments.json'
+import data from '../../data/comments.json'
 import FormComponent from './FormComponent'
 import { useState } from 'react'
 
-function CommentsList() {
-    const [items, setItems] = useState(comments)
+function CommentSection() {
+    const [comments, setComments] = useState(data)
 
     const createComment = content =>
-        setItems(prev =>
+        setComments(prev =>
             [...prev, {
                 id: crypto.randomUUID(),
                 content,
@@ -25,18 +25,20 @@ function CommentsList() {
         )
 
     return (
-        <div className="comments-list">
-            {items.map(parentComment => (
-                <Thread
-                    parentComment={parentComment}
-                    updateComments={setItems}
-                    key={parentComment.id}
-                />
-            ))}
+        <div className="comment-section">
+            <div className="comments-list">
+                {comments.map(parentComment => (
+                    <Thread
+                        parentComment={parentComment}
+                        updateComments={setComments}
+                        key={parentComment.id}
+                    />
+                ))}
+            </div>
 
             <FormComponent triggerUpdate={createComment} />
         </div>
     )
 }
 
-export default CommentsList
+export default CommentSection

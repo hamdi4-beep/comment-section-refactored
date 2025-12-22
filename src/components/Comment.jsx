@@ -1,8 +1,6 @@
-import { useState } from "react"
+import { useState, useRef } from "react"
 import { createUpdatedComment } from "../utils/commentUtils"
 import FormComponent from "./FormComponent"
-
-// add new ID generation reply
 
 function Comment({
   comment,
@@ -10,30 +8,26 @@ function Comment({
   updateComments
 }) {
   const [formStatus, setFormStatus] = useState(null)
-  const [voteStatus, setVoteStatus] = useState(null)
   const [isModalHidden, setIsModalHidden] = useState(true)
+  const currentScoreRef = useRef(comment.score)
   // mimicks user authentication - just for demo purposes
   const isCurrentUser = comment.user.username === 'juliusomo'
 
   const handleUpVoteClick = () => {
-    setVoteStatus('upvoted')
-
     updateComments(prev =>
-      prev.map(parentItem =>
-        createUpdatedComment(parentItem, comment, {
-          score: voteStatus === 'upvoted' ? comment.score : comment.score + 1
+      prev.map(item =>
+        createUpdatedComment(item, comment, {
+          score: currentScoreRef.current >= comment.score ? comment.score + 1 : comment.score
         })
       )
     )
   }
 
   const handleDownVoteClick = () => {
-    setVoteStatus('downvoted')
-
     updateComments(prev =>
-      prev.map(parentItem =>
-        createUpdatedComment(parentItem, comment, {
-          score: voteStatus === 'downvoted' ? comment.score : comment.score - 1
+      prev.map(item =>
+        createUpdatedComment(item, comment, {
+          score: currentScoreRef.current <= comment.score ? comment.score - 1 : comment.score
         })
       )
     )
@@ -42,23 +36,23 @@ function Comment({
   const handleDeleteComment = () => {
     updateComments(prev => {
       if (!parentComment)
-        return prev.filter(parentItem => parentItem.id !== comment.id)
+        return prev.filter(item => item.id !== comment.id)
       
-      return prev.map(parentItem => {
-        if (parentItem.id === parentComment.id)
+      return prev.map(item => {
+        if (item.id === parentComment.id)
           return Object.assign({}, parentComment, {
             replies: parentComment.replies.filter(reply => reply.id !== comment.id)
           })
 
-        return parentItem
+        return item
       })
     })
   }
 
   const editComment = content => {
     updateComments(prev =>
-      prev.map(parentItem =>
-        createUpdatedComment(parentItem, comment, {
+      prev.map(item =>
+        createUpdatedComment(item, comment, {
           content
         })
       )
@@ -86,13 +80,13 @@ function Comment({
     }
 
     updateComments(prev =>
-      prev.map(parentItem => {
-        if (parentItem.id === targetComment.id)
+      prev.map(item => {
+        if (item.id === targetComment.id)
           return Object.assign({}, targetComment, {
             replies: targetComment.replies.concat(newReply)
           })
 
-        return parentItem
+        return item
       })
     )
 

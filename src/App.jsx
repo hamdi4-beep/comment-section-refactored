@@ -1,9 +1,9 @@
-import CommentsList from "./components/CommentsList"
+import CommentSection from "./components/CommentSection"
 
 function App() {
   return (
     <div className="App">
-      <CommentsList />
+      <CommentSection />
     </div>
   )
 }
