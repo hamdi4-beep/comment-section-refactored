@@ -232,3 +232,23 @@ button.cancel-action {
 button.delete-action {
     background-color: var(--primary-pink-400);
 }
+
+@media only screen and (max-width: 768px) {
+    .comment {
+        flex-direction: column-reverse;
+        position: relative;
+    }
+
+    .actions {
+        position: absolute;
+        right: 1em;
+        bottom: 2em;
+    }
+
+    .score-component {
+        flex-direction: row;
+        padding: .5em;
+        gap: 1em;
+        width: inherit;
+    }
+}
