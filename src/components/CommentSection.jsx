@@ -5,7 +5,7 @@ import { useState } from 'react'
 
 function CommentSection() {
     const [comments, setComments] = useState(data)
-    const sortedComments = comments.sort((a, b) => b.score - a.score)
+    const sortedComments = [...comments].sort((a, b) => b.score - a.score)
 
     const createComment = content =>
         setComments(prev =>
