@@ -5,6 +5,7 @@ import { useState } from 'react'
 
 function CommentSection() {
     const [comments, setComments] = useState(data)
+    const sortedComments = comments.sort((a, b) => b.score - a.score)
 
     const createComment = content =>
         setComments(prev =>
@@ -27,7 +28,7 @@ function CommentSection() {
     return (
         <div className="comment-section">
             <div className="comments-list">
-                {comments.map(parentComment => (
+                {sortedComments.map(parentComment => (
                     <Thread
                         parentComment={parentComment}
                         updateComments={setComments}
