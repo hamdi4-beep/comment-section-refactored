@@ -117,8 +117,9 @@ function Comment({
               </div>
 
               <p className="username">{comment.user.username}</p>
-              <span className="comment-date">{comment.createdAt}</span>
             </div>
+
+            <span className="comment-date">{comment.createdAt}</span>
 
             <div className="actions">
               {!isCurrentUser && (

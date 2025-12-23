@@ -68,6 +68,7 @@ button {
 
 .comment-date, .delete-modal span {
     color: var(--neutral-grey-500);
+    margin-left: .5em;
 }
 
 .actions {
