@@ -112,7 +112,7 @@ function Comment({
           <div className="card-header">
             <div className="user">
               <div className="user-img">
-                <img src={`${import.meta.env.BASE_URL + comment.user.image.png}`} alt="user avatar" />
+                <img src={import.meta.env.BASE_URL + comment.user.image.png} alt="user avatar" />
               </div>
 
               <p className="username">{comment.user.username}</p>

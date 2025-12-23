@@ -29,11 +29,24 @@ function CommentSection() {
         <div className="comment-section">
             <div className="comments-list">
                 {sortedComments.map(parentComment => (
-                    <Thread
-                        parentComment={parentComment}
-                        updateComments={setComments}
-                        key={parentComment.id}
-                    />
+                    <div key={parentComment.id}>
+                        <Comment
+                            comment={parentComment}
+                            parentComment={null}
+                            updateComments={updateComments}
+                        />
+
+                        <div className="replies-list">
+                            {parentComment.replies.map(reply => (
+                                <Comment
+                                    comment={reply}
+                                    parentComment={parentComment}
+                                    updateComments={updateComments}
+                                    key={reply.id}
+                                />
+                            ))}
+                        </div>
+                    </div>
                 ))}
             </div>
 
