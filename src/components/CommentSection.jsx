@@ -1,5 +1,5 @@
-import Thread from './Thread'
 import data from '../../data/comments.json'
+import Comment from './Comment'
 import FormComponent from './FormComponent'
 import { useState } from 'react'
 
@@ -33,7 +33,7 @@ function CommentSection() {
                         <Comment
                             comment={parentComment}
                             parentComment={null}
-                            updateComments={updateComments}
+                            updateComments={setComments}
                         />
 
                         <div className="replies-list">
@@ -41,7 +41,7 @@ function CommentSection() {
                                 <Comment
                                     comment={reply}
                                     parentComment={parentComment}
-                                    updateComments={updateComments}
+                                    updateComments={setComments}
                                     key={reply.id}
                                 />
                             ))}

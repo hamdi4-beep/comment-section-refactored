@@ -9,6 +9,7 @@ function Comment({
 }) {
   const [formStatus, setFormStatus] = useState(null)
   const [isModalHidden, setIsModalHidden] = useState(true)
+  // keeps track of the current score so the user can cycle between downvote, current, upvote values.
   const currentScoreRef = useRef(comment.score)
   // mimicks user authentication - just for demo purposes
   const isCurrentUser = comment.user.username === 'juliusomo'
@@ -98,13 +99,13 @@ function Comment({
       <div className="comment">
         <div className="score-component">
           <button onClick={handleUpVoteClick}>
-            <img src={import.meta.env.BASE_URL + '/images/icon-plus.svg'} alt="" />
+            <img src={import.meta.env.BASE_URL + '/images/icon-plus.svg'} alt="plus icon for upvoting" />
           </button>
 
           <span className="comment-score">{comment.score}</span>
 
           <button onClick={handleDownVoteClick}>
-            <img src={import.meta.env.BASE_URL + '/images/icon-minus.svg'} alt="" />
+            <img src={import.meta.env.BASE_URL + '/images/icon-minus.svg'} alt="minus icon for downvoting" />
           </button>
         </div>
 
@@ -122,21 +123,21 @@ function Comment({
             <div className="actions">
               {!isCurrentUser && (
                 <button onClick={() => setFormStatus(prev => prev === 'replying' ? null : 'replying')}>
-                  <img src={import.meta.env.BASE_URL + '/images/icon-reply.svg'} alt="" />
+                  <img src={import.meta.env.BASE_URL + '/images/icon-reply.svg'} alt="reply icon" />
                   <span className="reply-label">Reply</span>
                 </button>
               )}
 
               {isCurrentUser && (
                 <button onClick={() => setFormStatus(prev => prev === 'editing' ? null : 'editing')}>
-                  <img src={import.meta.env.BASE_URL + '/images/icon-edit.svg'} alt="" />
+                  <img src={import.meta.env.BASE_URL + '/images/icon-edit.svg'} alt="edit icon" />
                   <span className="edit-label">Edit</span>
                 </button>
               )}
 
               {isCurrentUser && (
                 <button onClick={() => setIsModalHidden(false)}>
-                  <img src={import.meta.env.BASE_URL + '/images/icon-delete.svg'} alt="" />
+                  <img src={import.meta.env.BASE_URL + '/images/icon-delete.svg'} alt="delete icon" />
                   <span className="delete-label">Delete</span>
                 </button>
               )}
