@@ -112,6 +112,10 @@ button {
     align-items: flex-start;
 }
 
+.wrapper:has(.form-component) .comment {
+    padding-bottom: 2em;
+}
+
 .score-component {
     display: flex;
     flex-direction: column;
@@ -144,7 +148,7 @@ button {
     font-weight: bold;
 }
 
-.replies-list {
+.reply-list {
     padding-left: 1em;
 }
 
@@ -161,7 +165,8 @@ button {
 }
 
 .wrapper .form-component {
-    margin-top: calc(-1em - 5px);
+    position: relative;
+    margin-top: -2rem;
     padding-top: 1em;
     border-top: 1px solid var(--neutral-grey-100);
     border-top-left-radius: 0;
