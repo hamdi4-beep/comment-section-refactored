@@ -9,7 +9,7 @@ function Comment({
 }) {
   const [formStatus, setFormStatus] = useState(null)
   const [isModalHidden, setIsModalHidden] = useState(true)
-  // keeps track of the current score so the user can cycle between downvote, current, upvote values.
+  // keeps track of the current score so the upvote and downvote update score relative to the current score.
   const currentScoreRef = useRef(comment.score)
   // mimicks user authentication - just for demo purposes
   const isCurrentUser = comment.user.username === 'juliusomo'
