@@ -3,7 +3,7 @@ import { useEffect } from "react"
 
 function FormComponent({
     value = '',
-    triggerUpdate
+    onSubmit
 }) {
     const textAreaRef = useRef(null)
 
@@ -13,14 +13,17 @@ function FormComponent({
     }, [])
 
     const handleSubmit = e => {
+        const formElem = e.currentTarget
         e.preventDefault()
         
-        const formData = new FormData(e.currentTarget)
+        const formData = new FormData(formElem)
         const comment = formData.get('comment')
         
         if (comment) {
-            triggerUpdate(comment)
+            onSubmit(comment)
         }
+
+        formElem.reset()
     }
 
     return (

@@ -156,13 +156,13 @@ function Comment({
       </div>
 
       {formStatus === 'replying' && (
-        <FormComponent triggerUpdate={createReply} />
+        <FormComponent onSubmit={createReply} />
       )}
 
       {formStatus === 'editing' && (
         <FormComponent
           value={comment.content}
-          triggerUpdate={editComment}
+          onSubmit={editComment}
         />
       )}
 

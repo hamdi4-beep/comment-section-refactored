@@ -50,7 +50,7 @@ function App() {
         ))}
       </div>
 
-      <FormComponent triggerUpdate={createComment} />
+      <FormComponent onSubmit={createComment} />
     </div>
   )
 }
