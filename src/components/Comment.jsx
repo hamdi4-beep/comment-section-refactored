@@ -15,22 +15,24 @@ function Comment({
   const isCurrentUser = comment.user.username === 'juliusomo'
 
   const handleUpVoteClick = () => {
-    updateComments(prev =>
-      prev.map(item =>
-        createUpdatedComment(item, comment, {
+    const createUpdatedScoreComment = item =>
+      createUpdatedComment(item, comment, {
           score: currentScoreRef.current >= comment.score ? comment.score + 1 : comment.score
         })
-      )
+
+    updateComments(prev =>
+      prev.map(item => createUpdatedScoreComment(item))
     )
   }
 
   const handleDownVoteClick = () => {
-    updateComments(prev =>
-      prev.map(item =>
-        createUpdatedComment(item, comment, {
+    const createUpdatedScoreComment = item =>
+      createUpdatedComment(item, comment, {
           score: currentScoreRef.current <= comment.score ? comment.score - 1 : comment.score
         })
-      )
+
+    updateComments(prev =>
+      prev.map(item => createUpdatedScoreComment(item))
     )
   }
 
@@ -51,12 +53,13 @@ function Comment({
   }
 
   const editComment = content => {
+    const createUpdatedContentComment = item =>
+      createUpdatedComment(item, comment, {
+        content
+      })
+
     updateComments(prev =>
-      prev.map(item =>
-        createUpdatedComment(item, comment, {
-          content
-        })
-      )
+      prev.map(item => createUpdatedContentComment(item))
     )
 
     setFormStatus(null)
