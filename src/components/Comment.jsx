@@ -43,8 +43,8 @@ function Comment({
       
       return prev.map(item => {
         if (item.id === parentComment.id)
-          return Object.assign({}, parentComment, {
-            replies: parentComment.replies.filter(reply => reply.id !== comment.id)
+          return Object.assign({}, item, {
+            replies: item.replies.filter(reply => reply.id !== comment.id)
           })
 
         return item
