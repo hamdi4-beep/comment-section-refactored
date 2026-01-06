@@ -1,17 +1,7 @@
-import { useRef } from "react"
-import { useEffect } from "react"
-
 function FormComponent({
     value = '',
     onSubmit
 }) {
-    const textAreaRef = useRef(null)
-
-    useEffect(() => {
-        const {current} = textAreaRef
-        if (current) current.focus()
-    }, [])
-
     const handleSubmit = e => {
         const formElem = e.currentTarget
         e.preventDefault()
@@ -33,7 +23,7 @@ function FormComponent({
             </div>
 
             <form action="#" onSubmit={handleSubmit}>
-                <textarea name="comment" id="comment" placeholder="Add a comment..." defaultValue={value} ref={textAreaRef}></textarea>
+                <textarea name="comment" id="comment" placeholder="Add a comment..." defaultValue={value} autoFocus></textarea>
                 <button className="cta">send</button>
             </form>
         </div>
