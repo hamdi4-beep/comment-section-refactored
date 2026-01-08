@@ -14,37 +14,40 @@ function Comment({
   // mimicks user authentication - just for demo purposes
   const isCurrentUser = comment.user.username === 'juliusomo'
 
-  const handleUpVoteClick = () => {
+  const upvoteComment = () => {
     const createUpdatedScoreComment = item =>
       createUpdatedComment(item, comment, {
-          score: currentScoreRef.current >= comment.score ? comment.score + 1 : comment.score
-        })
+        score: currentScoreRef.current >= comment.score ? comment.score + 1 : comment.score
+      })
 
     updateComments(prev =>
       prev.map(item => createUpdatedScoreComment(item))
     )
   }
 
-  const handleDownVoteClick = () => {
+  const downvoteComment = () => {
     const createUpdatedScoreComment = item =>
       createUpdatedComment(item, comment, {
-          score: currentScoreRef.current <= comment.score ? comment.score - 1 : comment.score
-        })
+        score: currentScoreRef.current <= comment.score ? comment.score - 1 : comment.score
+      })
 
     updateComments(prev =>
       prev.map(item => createUpdatedScoreComment(item))
     )
   }
 
-  const handleDeleteComment = () => {
+  const deleteComment = () => {
+    const createFilteredComment = items =>
+      items.filter(item => item.id !== comment.id)
+
     updateComments(prev => {
       if (!parentComment)
-        return prev.filter(item => item.id !== comment.id)
+        return createFilteredComment(prev)
       
       return prev.map(item => {
         if (item.id === parentComment.id)
           return Object.assign({}, item, {
-            replies: item.replies.filter(reply => reply.id !== comment.id)
+            replies: createFilteredComment(item.replies)
           })
 
         return item
@@ -101,13 +104,13 @@ function Comment({
     <div className="wrapper">
       <div className="comment">
         <div className="score-component">
-          <button onClick={handleUpVoteClick}>
+          <button onClick={() => upvoteComment()}>
             <img src={import.meta.env.BASE_URL + '/images/icon-plus.svg'} alt="plus icon for upvoting" />
           </button>
 
           <span className="comment-score">{comment.score}</span>
 
-          <button onClick={handleDownVoteClick}>
+          <button onClick={() => downvoteComment()}>
             <img src={import.meta.env.BASE_URL + '/images/icon-minus.svg'} alt="minus icon for downvoting" />
           </button>
         </div>
@@ -176,7 +179,7 @@ function Comment({
           
           <div className="action-buttons">
             <button className="cancel-action" onClick={() => setIsModalHidden(true)}>No, Cancel</button>
-            <button className="delete-action" onClick={handleDeleteComment}>Yes, Delete</button>
+            <button className="delete-action" onClick={() => deleteComment()}>Yes, Delete</button>
           </div>
         </div>
       )}
