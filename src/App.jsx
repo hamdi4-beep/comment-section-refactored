@@ -1,10 +1,10 @@
-import { useState } from 'react'
+import * as React from 'react'
 import data from '../data/comments.json'
 import Comment from './components/Comment'
 import FormComponent from './components/FormComponent'
 
 function App() {
-  const [comments, setComments] = useState(data)
+  const [comments, setComments] = React.useState(data)
   const sortedComments = [...comments].sort((a, b) => b.score - a.score)
 
   const createComment = content => {
@@ -30,7 +30,7 @@ function App() {
     <div className="App">
       <div className="comment-list">
         {sortedComments.map(parentComment => (
-          <div key={parentComment.id}>
+          <React.Fragment key={parentComment.id}>
             <Comment
               comment={parentComment}
               parentComment={null}
@@ -47,7 +47,7 @@ function App() {
                 />
               ))}
             </div>
-          </div>
+          </React.Fragment>
         ))}
       </div>
 
