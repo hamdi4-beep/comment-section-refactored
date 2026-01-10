@@ -1,38 +1,33 @@
-# Interactive Comments Section
+# Interactive Comment Section
 
-A React application featuring a nested comment system with voting, replies, editing, and deletion capabilities.
+A React-based comment system with nested replies, voting, and CRUD operations.
 
 ## Features
 
-- **Voting System**: Upvote/downvote comments with score tracking
-- **Nested Replies**: Reply to comments with threaded display
-- **Comment Management**: Edit and delete your own comments
-- **User Authentication**: Demo authentication to distinguish current user
-- **Inline Editing**: Edit comments directly within the interface
-- **Delete Confirmation**: Modal confirmation before removing comments
+- Create, edit, and delete comments
+- Reply to comments (one level of nesting)
+- Upvote/downvote with score tracking
+- Sort comments by score
+- Modal confirmation for deletions
+- Responsive design
 
-## Project Structure
+## Technical Implementation
 
-```
-src/
-├── components/
-│   ├── Comment.jsx          # Thread container for parent + replies
-│   ├── CommentCard.jsx      # Individual comment display & actions
-│   ├── CommentsList.jsx     # Top-level comments list
-│   └── FormComponent.jsx    # Reusable form for new/edited comments
-├── utils/
-│   └── commentUtils.js      # Helper for immutable comment updates
-└── css/
-    └── index.css            # Global styles
-```
+**State Management**: Uses `useState` with immutable updates. State lives in `App.jsx` and flows down through props.
 
-## State Management
+**Component Structure**:
+- `App.jsx` - Main component, manages comment state
+- `Comment.jsx` - Handles individual comment rendering and interactions
+- `FormComponent.jsx` - Reusable form for creating/editing comments
+- `commentUtils.js` - Pure utility function for nested state updates
 
-The app uses local component state with immutable updates. Parent comments and their replies are managed together, with changes propagated through the `updateParentComment` callback pattern.
+**Key Patterns**:
+- Functional state updates for nested data
+- Component-level update logic rather than centralized reducer
+- Uncontrolled form components with native HTML validation
+- UUID-based ID generation via `crypto.randomUUID()`
 
 ## Data Structure
-
-Comments are loaded from `data/comments.json` with the following shape:
 
 ```javascript
 {
@@ -40,15 +35,22 @@ Comments are loaded from `data/comments.json` with the following shape:
   content: string,
   createdAt: string,
   score: number,
-  user: { username: string, image: object },
-  replies: Comment[],
-  replyingTo?: string  // for nested replies
+  user: { username, image },
+  replies: [/* nested reply objects */]
 }
 ```
 
-## Running the Project
+Comments contain an array of replies. Updates traverse this structure to find and modify specific items while maintaining immutability.
+
+## Running Locally
 
 ```bash
 npm install
 npm run dev
 ```
+
+## Known Limitations
+
+- Single level of reply nesting only
+- No persistence (state resets on refresh)
+- Comments re-sort on every render
