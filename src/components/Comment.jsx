@@ -37,17 +37,14 @@ function Comment({
   }
 
   const deleteComment = () => {
-    const createFilteredComment = items =>
-      items.filter(item => item.id !== comment.id)
-
     updateComments(prev => {
       if (!parentComment)
-        return createFilteredComment(prev)
+        return prev.filter(item => item.id !== comment.id)
       
       return prev.map(item => {
         if (item.id === parentComment.id)
           return Object.assign({}, item, {
-            replies: createFilteredComment(item.replies)
+            replies: item.replies.filter(reply => reply.id !== comment.id)
           })
 
         return item
@@ -89,8 +86,8 @@ function Comment({
     updateComments(prev =>
       prev.map(item => {
         if (item.id === targetComment.id)
-          return Object.assign({}, targetComment, {
-            replies: targetComment.replies.concat(newReply)
+          return Object.assign({}, item, {
+            replies: item.replies.concat(newReply)
           })
 
         return item

@@ -11,9 +11,8 @@ function FormComponent({
         
         if (comment) {
             onSubmit(comment)
+            formElem.reset()
         }
-
-        formElem.reset()
     }
 
     return (
