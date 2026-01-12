@@ -1,6 +1,17 @@
 import { useState, useRef } from "react"
-import { createUpdatedComment } from "../utils/commentUtils"
 import FormComponent from "./FormComponent"
+
+const createUpdatedComment = (parentComment, targetComment, props) => {
+  const updatedComment = Object.assign({}, targetComment, props)
+
+  if (parentComment.id === targetComment.id) return updatedComment
+
+  return Object.assign({}, parentComment, {
+    replies: parentComment.replies.map(reply =>
+      reply.id === targetComment.id ? updatedComment : reply
+    )
+  })
+}
 
 function Comment({
   comment,
