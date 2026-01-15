@@ -61,14 +61,9 @@ const Comment = memo(function Comment({
   }
 
   const editComment = content => {
-    const createUpdatedContentComment = item =>
-      createUpdatedComment(item, comment, {
-        content
-      })
-
-    updateComments(prev =>
-      prev.map(item => createUpdatedContentComment(item))
-    )
+    updateComments(prev => createUpdatedComment(prev, comment, {
+      content
+    }))
 
     setFormStatus(null)
   }
