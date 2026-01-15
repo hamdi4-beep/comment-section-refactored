@@ -1,19 +1,22 @@
 import { useState, useRef } from "react"
 import FormComponent from "./FormComponent"
+import data from '../../data/comments.json'
+import { memo } from "react"
 
-const createUpdatedComment = (parentComment, targetComment, props) => {
-  const updatedComment = Object.assign({}, targetComment, props)
+const createUpdatedComment = (tree, comment, props) =>
+  tree.map(item => {
+    if (item.id === comment.id)
+      return Object.assign({}, item, props)
 
-  if (parentComment.id === targetComment.id) return updatedComment
+    if (item.replies && item.replies.some(reply => reply.id === comment.id))
+      return Object.assign({}, item, {
+        replies: createUpdatedComment(item.replies, comment, props)
+      })
 
-  return Object.assign({}, parentComment, {
-    replies: parentComment.replies.map(reply =>
-      reply.id === targetComment.id ? updatedComment : reply
-    )
+    return item
   })
-}
 
-function Comment({
+const Comment = memo(function Comment({
   comment,
   parentComment,
   updateComments
@@ -26,24 +29,18 @@ function Comment({
   const isCurrentUser = comment.user.username === 'juliusomo'
 
   const upvoteComment = () => {
-    const createUpdatedScoreComment = item =>
-      createUpdatedComment(item, comment, {
+    updateComments(prev =>
+      createUpdatedComment(prev, comment, {
         score: currentScoreRef.current >= comment.score ? comment.score + 1 : comment.score
       })
-
-    updateComments(prev =>
-      prev.map(item => createUpdatedScoreComment(item))
     )
   }
 
   const downvoteComment = () => {
-    const createUpdatedScoreComment = item =>
-      createUpdatedComment(item, comment, {
+    updateComments(prev =>
+      createUpdatedComment(prev, comment, {
         score: currentScoreRef.current <= comment.score ? comment.score - 1 : comment.score
       })
-
-    updateComments(prev =>
-      prev.map(item => createUpdatedScoreComment(item))
     )
   }
 
@@ -193,6 +190,6 @@ function Comment({
       )}
     </div>
   )
-}
+})
 
 export default Comment
