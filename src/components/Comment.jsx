@@ -46,7 +46,7 @@ const Comment = memo(function Comment({
   }
 
   const handleDeleteClick = () => {
-    const createFilteredComment = (state, parentComment, comment) => {
+    const createFilteredComment = state => {
       if (!parentComment)
         return state.filter(item => item.id !== comment.id)
       
@@ -60,7 +60,7 @@ const Comment = memo(function Comment({
       })
     }
 
-    updateComments(prev => createFilteredComment(prev, parentComment, comment))
+    updateComments(prev => createFilteredComment(prev))
   }
 
   const handleEditSubmit = content => {
