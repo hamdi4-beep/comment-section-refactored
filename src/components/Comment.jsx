@@ -1,6 +1,5 @@
 import { useState, useRef } from "react"
 import FormComponent from "./FormComponent"
-import data from '../../data/comments.json'
 import { memo } from "react"
 
 const createUpdatedComment = (tree, comment, props) =>
@@ -28,28 +27,30 @@ const Comment = memo(function Comment({
   // mimicks user authentication - just for demo purposes
   const isCurrentUser = comment.user.username === 'juliusomo'
 
-  const upvoteComment = () => {
-    updateComments(prev =>
-      createUpdatedComment(prev, comment, {
+  const handleUpVoteClick = () => {
+    const updateScore = state =>
+      createUpdatedComment(state, comment, {
         score: currentScoreRef.current >= comment.score ? comment.score + 1 : comment.score
       })
-    )
+
+    updateComments(prev => updateScore(prev))
   }
 
-  const downvoteComment = () => {
-    updateComments(prev =>
-      createUpdatedComment(prev, comment, {
+  const handleDownVoteClick = () => {
+    const updateScore = state =>
+      createUpdatedComment(state, comment, {
         score: currentScoreRef.current <= comment.score ? comment.score - 1 : comment.score
       })
-    )
+
+    updateComments(prev => updateScore(prev))
   }
 
-  const deleteComment = () => {
-    updateComments(prev => {
+  const handleDeleteClick = () => {
+    const createFilteredComment = (state, parentComment, comment) => {
       if (!parentComment)
-        return prev.filter(item => item.id !== comment.id)
+        return state.filter(item => item.id !== comment.id)
       
-      return prev.map(item => {
+      return state.map(item => {
         if (item.id === parentComment.id)
           return Object.assign({}, item, {
             replies: item.replies.filter(reply => reply.id !== comment.id)
@@ -57,18 +58,23 @@ const Comment = memo(function Comment({
 
         return item
       })
-    })
+    }
+
+    updateComments(prev => createFilteredComment(prev, parentComment, comment))
   }
 
-  const editComment = content => {
-    updateComments(prev => createUpdatedComment(prev, comment, {
-      content
-    }))
+  const handleEditSubmit = content => {
+    const updateCommentContent = state =>
+      createUpdatedComment(state, comment, {
+        content
+      })
+
+    updateComments(prev => updateCommentContent(prev))
 
     setFormStatus(null)
   }
 
-  const createReply = content => {
+  const handleReplySubmit = content => {
     const targetComment = parentComment ?? comment
 
     const newReply = {
@@ -86,8 +92,8 @@ const Comment = memo(function Comment({
       }
     }
 
-    updateComments(prev =>
-      prev.map(item => {
+    const createReply = state =>
+      state.map(item => {
         if (item.id === targetComment.id)
           return Object.assign({}, item, {
             replies: item.replies.concat(newReply)
@@ -95,7 +101,8 @@ const Comment = memo(function Comment({
 
         return item
       })
-    )
+
+    updateComments(prev => createReply(prev))
 
     setFormStatus(null)
   }
@@ -104,13 +111,13 @@ const Comment = memo(function Comment({
     <div className="wrapper">
       <div className="comment">
         <div className="score-component">
-          <button onClick={() => upvoteComment()}>
+          <button onClick={handleUpVoteClick}>
             <img src={import.meta.env.BASE_URL + '/images/icon-plus.svg'} alt="plus icon for upvoting" />
           </button>
 
           <span className="comment-score">{comment.score}</span>
 
-          <button onClick={() => downvoteComment()}>
+          <button onClick={handleDownVoteClick}>
             <img src={import.meta.env.BASE_URL + '/images/icon-minus.svg'} alt="minus icon for downvoting" />
           </button>
         </div>
@@ -162,13 +169,13 @@ const Comment = memo(function Comment({
       </div>
 
       {formStatus === 'replying' && (
-        <FormComponent onSubmit={createReply} />
+        <FormComponent onSubmit={handleReplySubmit} />
       )}
 
       {formStatus === 'editing' && (
         <FormComponent
           value={comment.content}
-          onSubmit={editComment}
+          onSubmit={handleEditSubmit}
         />
       )}
 
@@ -179,7 +186,7 @@ const Comment = memo(function Comment({
           
           <div className="action-buttons">
             <button className="cancel-action" onClick={() => setIsModalHidden(true)}>No, Cancel</button>
-            <button className="delete-action" onClick={() => deleteComment()}>Yes, Delete</button>
+            <button className="delete-action" onClick={handleDeleteClick}>Yes, Delete</button>
           </div>
         </div>
       )}
