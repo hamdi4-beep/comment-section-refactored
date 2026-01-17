@@ -1,21 +1,20 @@
-import { useState, useRef } from "react"
+import { useState, useRef, memo } from "react"
 import FormComponent from "./FormComponent"
-import { memo } from "react"
 
-const createUpdatedComment = (tree, comment, props) =>
+const createUpdatedComment = (tree, target, props) =>
   tree.map(item => {
-    if (item.id === comment.id)
+    if (item.id === target.id)
       return Object.assign({}, item, props)
 
-    if (item.replies && item.replies.some(reply => reply.id === comment.id))
+    if (item.replies && item.replies.some(reply => reply.id === target.id))
       return Object.assign({}, item, {
-        replies: createUpdatedComment(item.replies, comment, props)
+        replies: createUpdatedComment(item.replies, target, props)
       })
 
     return item
   })
 
-const Comment = memo(function Comment({
+const Comment = memo(function({
   comment,
   parentComment,
   updateComments
@@ -92,17 +91,11 @@ const Comment = memo(function Comment({
       }
     }
 
-    const createReply = state =>
-      state.map(item => {
-        if (item.id === targetComment.id)
-          return Object.assign({}, item, {
-            replies: item.replies.concat(newReply)
-          })
-
-        return item
+    updateComments(prev =>
+      createUpdatedComment(prev, targetComment, {
+        replies: targetComment.replies.concat(newReply)
       })
-
-    updateComments(prev => createReply(prev))
+    )
 
     setFormStatus(null)
   }
