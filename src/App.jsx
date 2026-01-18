@@ -30,24 +30,12 @@ function App() {
     <div className="App">
       <div className="comment-list">
         {sortedComments.map(parentComment => (
-          <React.Fragment key={parentComment.id}>
-            <Comment
-              comment={parentComment}
-              parentComment={null}
-              updateComments={setComments}
-            />
-
-            <div className="reply-list">
-              {parentComment.replies.map(reply => (
-                <Comment
-                  key={reply.id}
-                  comment={reply}
-                  parentComment={parentComment}
-                  updateComments={setComments}
-                />
-              ))}
-            </div>
-          </React.Fragment>
+          <Comment
+            key={parentComment.id}
+            comment={parentComment}
+            parentComment={null}
+            updateComments={setComments}
+          />
         ))}
       </div>
 
