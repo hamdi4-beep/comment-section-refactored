@@ -101,7 +101,7 @@ const Comment = memo(function({
   }
 
   return (
-    <div className="comment-container">
+    <div className="container">
       <div className="wrapper">
         <div className="comment">
           <div className="score-component">
