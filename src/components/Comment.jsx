@@ -1,14 +1,10 @@
 import { useState, useRef, memo } from "react"
 import FormComponent from "./FormComponent"
 
-const Comment = memo(function({
+function Comment({
   comment,
   parentComment,
-  incrementScore,
-  decrementScore,
-  updateContent,
-  createReply,
-  deleteComment
+  commentActions
 }) {
   const [formStatus, setFormStatus] = useState(null)
   const [isModalHidden, setIsModalHidden] = useState(true)
@@ -22,13 +18,13 @@ const Comment = memo(function({
       <div className="wrapper">
         <div className="comment">
           <div className="score-component">
-            <button onClick={() => incrementScore(comment, currentScoreRef.current)}>
+            <button onClick={() => commentActions.incrementScore(comment, currentScoreRef.current)}>
               <img src={import.meta.env.BASE_URL + '/images/icon-plus.svg'} alt="plus icon for upvoting" />
             </button>
 
             <span className="comment-score">{comment.score}</span>
 
-            <button onClick={() => decrementScore(comment, currentScoreRef.current)}>
+            <button onClick={() => commentActions.decrementScore(comment, currentScoreRef.current)}>
               <img src={import.meta.env.BASE_URL + '/images/icon-minus.svg'} alt="minus icon for downvoting" />
             </button>
           </div>
@@ -80,13 +76,13 @@ const Comment = memo(function({
         </div>
 
         {formStatus === 'replying' && (
-          <FormComponent onSubmit={content => createReply(comment, parentComment, content)} />
+          <FormComponent onSubmit={content => commentActions.createReply(comment, parentComment, content)} />
         )}
 
         {formStatus === 'editing' && (
           <FormComponent
             value={comment.content}
-            onSubmit={content => updateContent(comment, content)}
+            onSubmit={content => commentActions.updateContent(comment, content)}
           />
         )}
 
@@ -97,7 +93,7 @@ const Comment = memo(function({
             
             <div className="action-buttons">
               <button className="cancel-action" onClick={() => setIsModalHidden(true)}>No, Cancel</button>
-              <button className="delete-action" onClick={() => deleteComment(comment, parentComment)}>Yes, Delete</button>
+              <button className="delete-action" onClick={() => commentActions.deleteComment(comment, parentComment)}>Yes, Delete</button>
             </div>
           </div>
         )}
@@ -109,16 +105,12 @@ const Comment = memo(function({
             key={reply.id}
             comment={reply}
             parentComment={comment}
-            incrementScore={incrementScore}
-            decrementScore={decrementScore}
-            createReply={createReply}
-            updateContent={updateContent}
-            deleteComment={deleteComment}
+            commentActions={commentActions}
           />
         ))}
       </div>
     </div>
   )
-})
+}
 
 export default Comment
