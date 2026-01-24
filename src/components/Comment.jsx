@@ -97,7 +97,7 @@ const Comment = memo(function({
             
             <div className="action-buttons">
               <button className="cancel-action" onClick={() => setIsModalHidden(true)}>No, Cancel</button>
-              <button className="delete-action" onClick={deleteComment}>Yes, Delete</button>
+              <button className="delete-action" onClick={() => deleteComment(comment, parentComment)}>Yes, Delete</button>
             </div>
           </div>
         )}
