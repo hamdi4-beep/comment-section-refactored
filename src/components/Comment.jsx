@@ -32,7 +32,7 @@ const createReply = (state, parentComment, comment, content) => {
     }
   }
 
-  createUpdatedComment(state, targetComment, {
+  return createUpdatedComment(state, targetComment, {
     replies: targetComment.replies.concat(newReply)
   })
 }
@@ -88,7 +88,7 @@ const Comment = memo(function({
     updateComments(prev => deleteComment(prev, parentComment, comment))
 
   const handleEditSubmit = content => {
-    createUpdatedComment(prev => updateContent(prev, comment, content))
+    updateComments(prev => updateContent(prev, comment, content))
     setFormStatus(null)
   }
 
