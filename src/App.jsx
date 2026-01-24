@@ -28,14 +28,16 @@ function App() {
 
   return (
     <div className="App">
-      {sortedComments.map(parentComment => (
-        <Comment
-          key={parentComment.id}
-          comment={parentComment}
-          parentComment={null}
-          updateComments={setComments}
-        />
-      ))}
+      <div className="comment-list">
+        {sortedComments.map(parentComment => (
+          <Comment
+            key={parentComment.id}
+            comment={parentComment}
+            parentComment={null}
+            updateComments={setComments}
+          />
+        ))}
+      </div>
 
       <FormComponent onSubmit={createComment} />
     </div>

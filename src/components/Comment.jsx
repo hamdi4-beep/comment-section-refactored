@@ -14,6 +14,58 @@ const createUpdatedComment = (tree, target, props) =>
     return item
   })
 
+const createReply = (state, parentComment, comment, content) => {
+  const targetComment = parentComment ?? comment
+
+  const newReply = {
+    id: crypto.randomUUID(),
+    content,
+    createdAt: "just now",
+    score: 0,
+    replyingTo: comment.user.username,
+    user: {
+      image: { 
+        png: "/images/avatars/image-juliusomo.png",
+        webp: "/images/avatars/image-juliusomo.webp"
+      },
+      username: "juliusomo"
+    }
+  }
+
+  createUpdatedComment(state, targetComment, {
+    replies: targetComment.replies.concat(newReply)
+  })
+}
+
+const incrementScore = (state, comment, currentScore) =>
+  createUpdatedComment(state, comment, {
+    score: currentScore >= comment.score ? comment.score + 1 : comment.score
+  })
+
+const decrementScore = (state, comment, currentScore) =>
+  createUpdatedComment(state, comment, {
+    score: currentScore <= comment.score ? comment.score - 1 : comment.score
+  })
+
+const updateContent = (state, comment, content) =>
+  createUpdatedComment(state, comment, {
+    content
+  })
+
+const deleteComment = (state, parentComment, comment) => {
+  if (!parentComment)
+    return state.filter(item => item.id !== comment.id)
+  
+  return state.map(item => {
+    if (item.id === parentComment.id)
+      return Object.assign({}, item, {
+        replies: item.replies.filter(reply => reply.id !== comment.id)
+      })
+
+    return item
+  })
+}
+
 const Comment = memo(function({
   comment,
   parentComment,
@@ -26,77 +78,22 @@ const Comment = memo(function({
   // mimicks user authentication - just for demo purposes
   const isCurrentUser = comment.user.username === 'juliusomo'
 
-  const handleUpVoteClick = () => {
-    const updateScore = state =>
-      createUpdatedComment(state, comment, {
-        score: currentScoreRef.current >= comment.score ? comment.score + 1 : comment.score
-      })
+  const handleUpVoteClick = () =>
+    updateComments(prev => incrementScore(prev, comment, currentScoreRef.current))
 
-    updateComments(prev => updateScore(prev))
-  }
+  const handleDownVoteClick = () =>
+    updateComments(prev => decrementScore(prev, comment, currentScoreRef.current))
 
-  const handleDownVoteClick = () => {
-    const updateScore = state =>
-      createUpdatedComment(state, comment, {
-        score: currentScoreRef.current <= comment.score ? comment.score - 1 : comment.score
-      })
-
-    updateComments(prev => updateScore(prev))
-  }
-
-  const handleDeleteClick = () => {
-    const createFilteredComment = state => {
-      if (!parentComment)
-        return state.filter(item => item.id !== comment.id)
-      
-      return state.map(item => {
-        if (item.id === parentComment.id)
-          return Object.assign({}, item, {
-            replies: item.replies.filter(reply => reply.id !== comment.id)
-          })
-
-        return item
-      })
-    }
-
-    updateComments(prev => createFilteredComment(prev))
-  }
+  const handleDeleteClick = () =>
+    updateComments(prev => deleteComment(prev, parentComment, comment))
 
   const handleEditSubmit = content => {
-    const updateCommentContent = state =>
-      createUpdatedComment(state, comment, {
-        content
-      })
-
-    updateComments(prev => updateCommentContent(prev))
-
+    createUpdatedComment(prev => updateContent(prev, comment, content))
     setFormStatus(null)
   }
 
   const handleReplySubmit = content => {
-    const targetComment = parentComment ?? comment
-
-    const newReply = {
-      id: crypto.randomUUID(),
-      content,
-      createdAt: "just now",
-      score: 0,
-      replyingTo: comment.user.username,
-      user: {
-        image: { 
-          png: "/images/avatars/image-juliusomo.png",
-          webp: "/images/avatars/image-juliusomo.webp"
-        },
-        username: "juliusomo"
-      }
-    }
-
-    updateComments(prev =>
-      createUpdatedComment(prev, targetComment, {
-        replies: targetComment.replies.concat(newReply)
-      })
-    )
-
+    updateComments(prev => createReply(prev, parentComment, comment, content))
     setFormStatus(null)
   }
 
