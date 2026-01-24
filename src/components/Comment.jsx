@@ -1,75 +1,14 @@
 import { useState, useRef, memo } from "react"
 import FormComponent from "./FormComponent"
 
-const createUpdatedComment = (tree, target, props) =>
-  tree.map(item => {
-    if (item.id === target.id)
-      return Object.assign({}, item, props)
-
-    if (item.replies && item.replies.some(reply => reply.id === target.id))
-      return Object.assign({}, item, {
-        replies: createUpdatedComment(item.replies, target, props)
-      })
-
-    return item
-  })
-
-const createReply = (state, parentComment, comment, content) => {
-  const targetComment = parentComment ?? comment
-
-  const newReply = {
-    id: crypto.randomUUID(),
-    content,
-    createdAt: "just now",
-    score: 0,
-    replyingTo: comment.user.username,
-    user: {
-      image: { 
-        png: "/images/avatars/image-juliusomo.png",
-        webp: "/images/avatars/image-juliusomo.webp"
-      },
-      username: "juliusomo"
-    }
-  }
-
-  return createUpdatedComment(state, targetComment, {
-    replies: targetComment.replies.concat(newReply)
-  })
-}
-
-const incrementScore = (state, comment, currentScore) =>
-  createUpdatedComment(state, comment, {
-    score: currentScore >= comment.score ? comment.score + 1 : comment.score
-  })
-
-const decrementScore = (state, comment, currentScore) =>
-  createUpdatedComment(state, comment, {
-    score: currentScore <= comment.score ? comment.score - 1 : comment.score
-  })
-
-const updateContent = (state, comment, content) =>
-  createUpdatedComment(state, comment, {
-    content
-  })
-
-const deleteComment = (state, parentComment, comment) => {
-  if (!parentComment)
-    return state.filter(item => item.id !== comment.id)
-  
-  return state.map(item => {
-    if (item.id === parentComment.id)
-      return Object.assign({}, item, {
-        replies: item.replies.filter(reply => reply.id !== comment.id)
-      })
-
-    return item
-  })
-}
-
 const Comment = memo(function({
   comment,
   parentComment,
-  updateComments
+  incrementScore,
+  decrementScore,
+  updateContent,
+  createReply,
+  deleteComment
 }) {
   const [formStatus, setFormStatus] = useState(null)
   const [isModalHidden, setIsModalHidden] = useState(true)
@@ -78,37 +17,18 @@ const Comment = memo(function({
   // mimicks user authentication - just for demo purposes
   const isCurrentUser = comment.user.username === 'juliusomo'
 
-  const handleUpVoteClick = () =>
-    updateComments(prev => incrementScore(prev, comment, currentScoreRef.current))
-
-  const handleDownVoteClick = () =>
-    updateComments(prev => decrementScore(prev, comment, currentScoreRef.current))
-
-  const handleDeleteClick = () =>
-    updateComments(prev => deleteComment(prev, parentComment, comment))
-
-  const handleEditSubmit = content => {
-    updateComments(prev => updateContent(prev, comment, content))
-    setFormStatus(null)
-  }
-
-  const handleReplySubmit = content => {
-    updateComments(prev => createReply(prev, parentComment, comment, content))
-    setFormStatus(null)
-  }
-
   return (
     <div className="container">
       <div className="wrapper">
         <div className="comment">
           <div className="score-component">
-            <button onClick={handleUpVoteClick}>
+            <button onClick={() => incrementScore(comment, currentScoreRef.current)}>
               <img src={import.meta.env.BASE_URL + '/images/icon-plus.svg'} alt="plus icon for upvoting" />
             </button>
 
             <span className="comment-score">{comment.score}</span>
 
-            <button onClick={handleDownVoteClick}>
+            <button onClick={() => decrementScore(comment, currentScoreRef.current)}>
               <img src={import.meta.env.BASE_URL + '/images/icon-minus.svg'} alt="minus icon for downvoting" />
             </button>
           </div>
@@ -160,13 +80,13 @@ const Comment = memo(function({
         </div>
 
         {formStatus === 'replying' && (
-          <FormComponent onSubmit={handleReplySubmit} />
+          <FormComponent onSubmit={content => createReply(comment, parentComment, content)} />
         )}
 
         {formStatus === 'editing' && (
           <FormComponent
             value={comment.content}
-            onSubmit={handleEditSubmit}
+            onSubmit={content => updateContent(comment, content)}
           />
         )}
 
@@ -177,7 +97,7 @@ const Comment = memo(function({
             
             <div className="action-buttons">
               <button className="cancel-action" onClick={() => setIsModalHidden(true)}>No, Cancel</button>
-              <button className="delete-action" onClick={handleDeleteClick}>Yes, Delete</button>
+              <button className="delete-action" onClick={deleteComment}>Yes, Delete</button>
             </div>
           </div>
         )}
@@ -189,7 +109,11 @@ const Comment = memo(function({
             key={reply.id}
             comment={reply}
             parentComment={comment}
-            updateComments={updateComments}
+            incrementScore={incrementScore}
+            decrementScore={decrementScore}
+            createReply={createReply}
+            updateContent={updateContent}
+            deleteComment={deleteComment}
           />
         ))}
       </div>
