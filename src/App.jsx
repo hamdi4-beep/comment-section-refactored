@@ -3,14 +3,14 @@ import data from '../data/comments.json'
 import Comment from './components/Comment'
 import FormComponent from './components/FormComponent'
 
-const createUpdatedComment = (tree, target, props) =>
+const updateComment = (tree, target, props) =>
   tree.map(item => {
     if (item.id === target.id)
       return Object.assign({}, item, props)
 
     if (item.replies && item.replies.some(reply => reply.id === target.id))
       return Object.assign({}, item, {
-        replies: createUpdatedComment(item.replies, target, props)
+        replies: updateComment(item.replies, target, props)
       })
 
     return item
@@ -41,21 +41,21 @@ function App() {
 
   const incrementScore = (comment, currentScore) =>
     setComments(prev =>
-      createUpdatedComment(prev, comment, {
+      updateComment(prev, comment, {
         score: currentScore >= comment.score ? comment.score + 1 : comment.score
       })
     )
 
   const decrementScore = (comment, currentScore) =>
     setComments(prev =>
-      createUpdatedComment(prev, comment, {
+      updateComment(prev, comment, {
         score: currentScore <= comment.score ? comment.score - 1 : comment.score
       })
     )
 
   const updateContent = (comment, content) =>
     setComments(prev =>
-      createUpdatedComment(prev, comment, {
+      updateComment(prev, comment, {
         content
       })
     )
@@ -94,7 +94,7 @@ function App() {
     }
 
     setComments(prev =>
-      createUpdatedComment(prev, targetComment, {
+      updateComment(prev, targetComment, {
         replies: targetComment.replies.concat(newReply)
       })
     )
