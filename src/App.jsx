@@ -20,13 +20,8 @@ const filterComment = (tree, comment, parentComment) => {
   if (!parentComment)
     return tree.filter(item => item.id !== comment.id)
   
-  return tree.map(item => {
-    if (item.id === parentComment.id)
-      return Object.assign({}, item, {
-        replies: item.replies.filter(reply => reply.id !== comment.id)
-      })
-
-    return item
+  return updateComment(tree, parentComment, {
+    replies: parentComment.replies.filter(reply => reply.id !== comment.id)
   })
 }
 
