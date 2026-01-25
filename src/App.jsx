@@ -17,12 +17,12 @@ const updateComment = (tree, target, props) =>
   })
 
 const filterComment = (tree, comment, parentComment) => {
-  if (!parentComment)
-    return tree.filter(item => item.id !== comment.id)
-  
-  return updateComment(tree, parentComment, {
-    replies: parentComment.replies.filter(reply => reply.id !== comment.id)
-  })
+  if (parentComment)
+    return updateComment(tree, parentComment, {
+      replies: parentComment.replies.filter(reply => reply.id !== comment.id)
+    })
+
+  return tree.filter(item => item.id !== comment.id)
 }
 
 function App() {
