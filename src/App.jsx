@@ -16,6 +16,20 @@ const updateComment = (tree, target, props) =>
     return item
   })
 
+const filterComment = (tree, comment, parentComment) => {
+  if (!parentComment)
+    return tree.filter(item => item.id !== comment.id)
+  
+  return tree.map(item => {
+    if (item.id === parentComment.id)
+      return Object.assign({}, item, {
+        replies: item.replies.filter(reply => reply.id !== comment.id)
+      })
+
+    return item
+  })
+}
+
 function App() {
   const [comments, setComments] = React.useState(data)
   const sortedComments = [...comments].sort((a, b) => b.score - a.score)
@@ -64,19 +78,7 @@ function App() {
       )
     },
     deleteComment(comment, parentComment) {
-      setComments(prev => {
-        if (!parentComment)
-          return prev.filter(item => item.id !== comment.id)
-        
-        return prev.map(item => {
-          if (item.id === parentComment.id)
-            return Object.assign({}, item, {
-              replies: item.replies.filter(reply => reply.id !== comment.id)
-            })
-
-          return item
-        })
-      })
+      setComments(prev => filterComment(prev, comment, parentComment))
     },
     incrementScore(comment, currentScore) {
       setComments(prev =>
