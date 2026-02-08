@@ -13,13 +13,13 @@ const updateComment = (tree, targetId, props) =>
     return item
   })
 
-const filterComment = (tree, comment, parentComment) => {
+const filterComment = (tree, targetId, parentComment) => {
   if (parentComment)
     return updateComment(tree, parentComment.id, {
-      replies: parentComment.replies.filter(reply => reply.id !== comment.id)
+      replies: parentComment.replies.filter(reply => reply.id !== targetId)
     })
 
-  return tree.filter(item => item.id !== comment.id)
+  return tree.filter(item => item.id !== targetId)
 }
 
 export function useComments(data) {
