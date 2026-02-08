@@ -6,6 +6,30 @@ A React-based comment system demonstrating production-ready patterns for state m
 
 ---
 
+## Table of Contents
+
+- [Why This Project Matters for Hiring](#why-this-project-matters-for-hiring)
+- [Features](#features)
+- [Architecture Deep Dive](#architecture-deep-dive)
+  - [Data Model: Recursive Comment Structure](#data-model-recursive-comment-structure)
+  - [State Management: The useComments Hook](#state-management-the-usecomments-hook)
+  - [Immutable Tree Updates: The Secret Sauce](#immutable-tree-updates-the-secret-sauce)
+  - [Component Responsibilities](#component-responsibilities)
+- [Key Implementation Patterns](#key-implementation-patterns)
+- [Component Flow Examples](#component-flow-examples)
+- [Technical Stack](#technical-stack)
+- [Project Structure](#project-structure)
+- [Running Locally](#running-locally)
+- [Code Quality Highlights](#code-quality-highlights)
+- [What This Demonstrates for Employers](#what-this-demonstrates-for-employers)
+- [Potential Extensions](#potential-extensions)
+- [Design Decisions & Trade-offs](#design-decisions--trade-offs)
+- [Learning Resources](#learning-resources)
+- [License](#license)
+- [Author](#author)
+
+---
+
 ## Why This Project Matters for Hiring
 
 This isn't just another CRUD app—it demonstrates several skills that translate directly to real-world React development:
