@@ -1,13 +1,13 @@
 import * as React from 'react'
 
-const updateComment = (tree, targetId, props) =>
+const updateComment = (tree, target, props) =>
   tree.map(item => {
-    if (item.id === targetId)
+    if (item.id === target.id)
       return Object.assign({}, item, props)
 
-    if (item.replies && item.replies.some(reply => reply.id === targetId))
+    if (item.id === target.parentId)
       return Object.assign({}, item, {
-        replies: updateComment(item.replies, targetId, props)
+        replies: updateComment(item.replies, target, props)
       })
 
     return item
@@ -15,7 +15,7 @@ const updateComment = (tree, targetId, props) =>
 
 const filterComment = (tree, targetId, parentComment) => {
   if (parentComment)
-    return updateComment(tree, parentComment.id, {
+    return updateComment(tree, parentComment, {
       replies: parentComment.replies.filter(reply => reply.id !== targetId)
     })
 
@@ -28,6 +28,7 @@ export function useComments(data) {
   const commentActions = {
     createComment(content) {
       const newComment = {
+        parentId: null,
         id: crypto.randomUUID(),
         content,
         createdAt: "just now",
@@ -48,6 +49,7 @@ export function useComments(data) {
       const targetComment = parentComment ?? comment
 
       const newReply = {
+        parentId: targetComment.id,
         id: crypto.randomUUID(),
         content,
         createdAt: "just now",
@@ -63,7 +65,7 @@ export function useComments(data) {
       }
 
       setComments(prev =>
-        updateComment(prev, targetComment.id, {
+        updateComment(prev, comment, {
           replies: targetComment.replies.concat(newReply)
         })
       )
@@ -73,21 +75,21 @@ export function useComments(data) {
     },
     incrementScore(comment, currentScore) {
       setComments(prev =>
-        updateComment(prev, comment.id, {
+        updateComment(prev, comment, {
           score: currentScore >= comment.score ? comment.score + 1 : comment.score
         })
       )
     },
     decrementScore(comment, currentScore) {
       setComments(prev =>
-        updateComment(prev, comment.id, {
+        updateComment(prev, comment, {
           score: currentScore <= comment.score ? comment.score - 1 : comment.score
         })
       )
     },
     updateContent(comment, content) {
       setComments(prev =>
-        updateComment(prev, comment.id, {
+        updateComment(prev, comment, {
           content
         })
       )

@@ -11,7 +11,7 @@
     "preview": "vite preview",
     "predeploy": "pnpm run build",
     "deploy": "gh-pages -d dist",
-    "test": "vitest",
+    "test": "vitest --reporter=tree",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest --coverage"
   },
