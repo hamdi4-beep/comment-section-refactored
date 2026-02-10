@@ -1,13 +1,13 @@
 import * as React from 'react'
 
-const updateComment = (tree, target, props) =>
+const updateComment = (tree, targetId, props) =>
   tree.map(item => {
-    if (item.id === target.id)
+    if (item.id === targetId)
       return Object.assign({}, item, props)
 
-    if (item.id === target.parentId)
+    if (item.replies && item.replies.some(reply => reply.id === targetId))
       return Object.assign({}, item, {
-        replies: updateComment(item.replies, target, props)
+        replies: updateComment(item.replies, targetId, props)
       })
 
     return item
@@ -65,7 +65,7 @@ export function useComments(data) {
       }
 
       setComments(prev =>
-        updateComment(prev, comment, {
+        updateComment(prev, targetComment.id, {
           replies: targetComment.replies.concat(newReply)
         })
       )
@@ -75,21 +75,21 @@ export function useComments(data) {
     },
     incrementScore(comment, currentScore) {
       setComments(prev =>
-        updateComment(prev, comment, {
+        updateComment(prev, comment.id, {
           score: currentScore >= comment.score ? comment.score + 1 : comment.score
         })
       )
     },
     decrementScore(comment, currentScore) {
       setComments(prev =>
-        updateComment(prev, comment, {
+        updateComment(prev, comment.id, {
           score: currentScore <= comment.score ? comment.score - 1 : comment.score
         })
       )
     },
     updateContent(comment, content) {
       setComments(prev =>
-        updateComment(prev, comment, {
+        updateComment(prev, comment.id, {
           content
         })
       )
