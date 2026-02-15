@@ -3,7 +3,6 @@ import FormComponent from "./FormComponent"
 
 function Comment({
   comment,
-  parentComment,
   commentActions
 }) {
   const [formStatus, setFormStatus] = useState(null)
@@ -104,7 +103,6 @@ function Comment({
           <Comment
             key={reply.id}
             comment={reply}
-            parentComment={comment}
             commentActions={commentActions}
           />
         ))}

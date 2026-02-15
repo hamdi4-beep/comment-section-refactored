@@ -14,7 +14,6 @@ function App() {
           <Comment
             key={parentComment.id}
             comment={parentComment}
-            parentComment={null}
             commentActions={commentActions}
           />
         ))}
