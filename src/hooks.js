@@ -13,14 +13,18 @@ const updateComment = (tree, targetId, props) =>
     return item
   })
 
-const filterComment = (tree, targetId, parentComment) => {
-  if (parentComment)
-    return updateComment(tree, parentComment, {
-      replies: parentComment.replies.filter(reply => reply.id !== targetId)
-    })
+const filterComment = (tree, targetItem) =>
+  tree
+    .filter(item => item.id !== targetItem.id)
+    .map(item => {
+      if (item.id === targetItem.parentId) {
+        return Object.assign({}, item, {
+          replies: item.replies.filter(it => it.id !== targetItem.id)
+        })
+      }
 
-  return tree.filter(item => item.id !== targetId)
-}
+      return item
+    })
 
 export function useComments(data) {
   const [comments, setComments] = React.useState(data)
@@ -70,8 +74,8 @@ export function useComments(data) {
         })
       )
     },
-    deleteComment(comment, parentComment) {
-      setComments(prev => filterComment(prev, comment.id, parentComment))
+    deleteComment(comment) {
+      setComments(prev => filterComment(prev, comment))
     },
     incrementScore(comment, currentScore) {
       setComments(prev =>

@@ -1,4 +1,4 @@
-import { useState, useRef, memo } from "react"
+import { useState, useRef } from "react"
 import FormComponent from "./FormComponent"
 
 function Comment({
@@ -93,7 +93,7 @@ function Comment({
             
             <div className="action-buttons">
               <button className="cancel-action" onClick={() => setIsModalHidden(true)}>No, Cancel</button>
-              <button className="delete-action" onClick={() => commentActions.deleteComment(comment, parentComment)}>Yes, Delete</button>
+              <button className="delete-action" onClick={() => commentActions.deleteComment(comment)}>Yes, Delete</button>
             </div>
           </div>
         )}
