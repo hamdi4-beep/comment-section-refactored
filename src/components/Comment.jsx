@@ -17,13 +17,13 @@ function Comment({
       <div className="wrapper">
         <div className="comment">
           <div className="score-component">
-            <button onClick={() => commentActions.incrementScore(comment, currentScoreRef.current)}>
+            <button onClick={() => commentActions.incrementScore(comment.parentId, comment.id, comment.score, currentScoreRef.current)}>
               <img src={import.meta.env.BASE_URL + '/images/icon-plus.svg'} alt="plus icon for upvoting" />
             </button>
 
             <span className="comment-score">{comment.score}</span>
 
-            <button onClick={() => commentActions.decrementScore(comment, currentScoreRef.current)}>
+            <button onClick={() => commentActions.decrementScore(comment.parentId, comment.id, comment.score, currentScoreRef.current)}>
               <img src={import.meta.env.BASE_URL + '/images/icon-minus.svg'} alt="minus icon for downvoting" />
             </button>
           </div>
@@ -75,13 +75,13 @@ function Comment({
         </div>
 
         {formStatus === 'replying' && (
-          <FormComponent onSubmit={content => commentActions.createReply(comment, content)} />
+          <FormComponent onSubmit={content => commentActions.createReply(comment.parentId, comment.id, comment.user.username, content)} />
         )}
 
         {formStatus === 'editing' && (
           <FormComponent
             value={comment.content}
-            onSubmit={content => commentActions.updateContent(comment, content)}
+            onSubmit={content => commentActions.updateContent(comment.parentId, comment.id, content)}
           />
         )}
 
@@ -92,7 +92,7 @@ function Comment({
             
             <div className="action-buttons">
               <button className="cancel-action" onClick={() => setIsModalHidden(true)}>No, Cancel</button>
-              <button className="delete-action" onClick={() => commentActions.deleteComment(comment)}>Yes, Delete</button>
+              <button className="delete-action" onClick={() => commentActions.deleteComment(comment.parentId, comment.id)}>Yes, Delete</button>
             </div>
           </div>
         )}

@@ -1,13 +1,13 @@
 import * as React from 'react'
 
-const updateComment = (tree, target, props) =>
+const updateComment = (tree, parentId, id, props) =>
   tree.map(node => {
-    if (node.id === target.id)
+    if (node.id === id)
       return Object.assign({}, node, props)
 
-    if (node.id === target.parentId)
+    if (node.id === parentId)
       return Object.assign({}, node, {
-        replies: updateComment(node.replies, target, props)
+        replies: updateComment(node.replies, parentId, id, props)
       })
 
     return node
@@ -23,13 +23,13 @@ const createReply = (tree, targetId, reply) =>
     return node
   })
 
-const filterComment = (tree, target) =>
+const filterComment = (tree, parentId, id) =>
   tree
-    .filter(node => node.id !== target.id)
+    .filter(node => node.id !== id)
     .map(node => {
-      if (node.id === target.parentId) {
+      if (node.id === parentId) {
         return Object.assign({}, node, {
-          replies: node.replies.filter(reply => reply.id !== target.id)
+          replies: node.replies.filter(reply => reply.id !== id)
         })
       }
 
@@ -59,8 +59,8 @@ export function useComments(data) {
 
       setComments(prev => [...prev, newComment])
     },
-    createReply(comment, content) {
-      const targetId = comment.parentId || comment.id
+    createReply(parentId, id, username, content) {
+      const targetId = parentId || id
 
       const newReply = {
         parentId: targetId,
@@ -68,7 +68,7 @@ export function useComments(data) {
         content,
         createdAt: "just now",
         score: 0,
-        replyingTo: comment.user.username,
+        replyingTo: username,
         user: {
           image: { 
             png: "/images/avatars/image-juliusomo.png",
@@ -80,26 +80,26 @@ export function useComments(data) {
 
       setComments(prev => createReply(prev, targetId, newReply))
     },
-    deleteComment(comment) {
-      setComments(prev => filterComment(prev, comment))
+    deleteComment(parentId, id) {
+      setComments(prev => filterComment(prev, parentId, id))
     },
-    incrementScore(comment, currentScore) {
+    incrementScore(parentId, id, score, currentScore) {
       setComments(prev =>
-        updateComment(prev, comment, {
-          score: currentScore >= comment.score ? comment.score + 1 : comment.score
+        updateComment(prev, parentId, id, {
+          score: currentScore >= score ? score + 1 : score
         })
       )
     },
-    decrementScore(comment, currentScore) {
+    decrementScore(parentId, id, score, currentScore) {
       setComments(prev =>
-        updateComment(prev, comment, {
-          score: currentScore <= comment.score ? comment.score - 1 : comment.score
+        updateComment(prev, parentId, id, {
+          score: currentScore <= score ? score - 1 : score
         })
       )
     },
-    updateContent(comment, content) {
+    updateContent(parentId, id, content) {
       setComments(prev =>
-        updateComment(prev, comment, {
+        updateComment(prev, parentId, id, {
           content
         })
       )
