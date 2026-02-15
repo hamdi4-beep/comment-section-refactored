@@ -1,29 +1,39 @@
 import * as React from 'react'
 
 const updateComment = (tree, target, props) =>
-  tree.map(item => {
-    if (item.id === target.id)
-      return Object.assign({}, item, props)
+  tree.map(node => {
+    if (node.id === target.id)
+      return Object.assign({}, node, props)
 
-    if (item.id === target.parentId)
-      return Object.assign({}, item, {
-        replies: updateComment(item.replies, target, props)
+    if (node.id === target.parentId)
+      return Object.assign({}, node, {
+        replies: updateComment(node.replies, target, props)
       })
 
-    return item
+    return node
   })
 
-const filterComment = (tree, targetItem) =>
+const createReply = (tree, targetId, reply) =>
+  tree.map(node => {
+    if (node.id === targetId)
+      return Object.assign({}, node, {
+        replies: node.replies.concat(reply)
+      })
+
+    return node
+  })
+
+const filterComment = (tree, target) =>
   tree
-    .filter(item => item.id !== targetItem.id)
-    .map(item => {
-      if (item.id === targetItem.parentId) {
-        return Object.assign({}, item, {
-          replies: item.replies.filter(it => it.id !== targetItem.id)
+    .filter(node => node.id !== target.id)
+    .map(node => {
+      if (node.id === target.parentId) {
+        return Object.assign({}, node, {
+          replies: node.replies.filter(reply => reply.id !== target.id)
         })
       }
 
-      return item
+      return node
     })
 
 export function useComments(data) {
@@ -49,11 +59,11 @@ export function useComments(data) {
 
       setComments(prev => [...prev, newComment])
     },
-    createReply(comment, parentComment, content) {
-      const targetComment = parentComment || comment
+    createReply(comment, content) {
+      const targetId = comment.parentId || comment.id
 
       const newReply = {
-        parentId: targetComment.id,
+        parentId: targetId,
         id: crypto.randomUUID(),
         content,
         createdAt: "just now",
@@ -68,11 +78,7 @@ export function useComments(data) {
         }
       }
 
-      setComments(prev =>
-        updateComment(prev, targetComment, {
-          replies: targetComment.replies.concat(newReply)
-        })
-      )
+      setComments(prev => createReply(prev, targetId, newReply))
     },
     deleteComment(comment) {
       setComments(prev => filterComment(prev, comment))

@@ -76,7 +76,7 @@ function Comment({
         </div>
 
         {formStatus === 'replying' && (
-          <FormComponent onSubmit={content => commentActions.createReply(comment, parentComment, content)} />
+          <FormComponent onSubmit={content => commentActions.createReply(comment, content)} />
         )}
 
         {formStatus === 'editing' && (
