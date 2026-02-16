@@ -1,45 +1,45 @@
 import * as React from 'react'
 
 const updateComment = (tree, parentId, id, props) =>
-  tree.map(node => {
-    if (node.id === id)
-      return Object.assign({}, node, props)
+  tree.map(comment => {
+    if (comment.id === id)
+      return Object.assign({}, comment, props)
 
-    if (node.id === parentId)
-      return Object.assign({}, node, {
-        replies: updateComment(node.replies, parentId, id, props)
+    if (comment.id === parentId)
+      return Object.assign({}, comment, {
+        replies: updateComment(comment.replies, parentId, id, props)
       })
 
-    return node
+    return comment
   })
 
-const createReply = (tree, targetId, reply) =>
-  tree.map(node => {
-    if (node.id === targetId)
-      return Object.assign({}, node, {
-        replies: node.replies.concat(reply)
+const createReply = (tree, id, reply) =>
+  tree.map(comment => {
+    if (comment.id === id)
+      return Object.assign({}, comment, {
+        replies: comment.replies.concat(reply)
       })
 
-    return node
+    return comment
   })
 
 const filterComment = (tree, parentId, id) =>
   tree
-    .filter(node => node.id !== id)
-    .map(node => {
-      if (node.id === parentId) {
-        return Object.assign({}, node, {
-          replies: node.replies.filter(reply => reply.id !== id)
+    .filter(comment => comment.id !== id)
+    .map(comment => {
+      if (comment.id === parentId) {
+        return Object.assign({}, comment, {
+          replies: comment.replies.filter(reply => reply.id !== id)
         })
       }
 
-      return node
+      return comment
     })
 
 export function useComments(data) {
   const [comments, setComments] = React.useState(data)
 
-  const commentActions = {
+  const actions = {
     createComment(content) {
       const newComment = {
         parentId: null,
@@ -97,7 +97,7 @@ export function useComments(data) {
         })
       )
     },
-    updateContent(parentId, id, content) {
+    editComment(parentId, id, content) {
       setComments(prev =>
         updateComment(prev, parentId, id, {
           content
@@ -108,6 +108,6 @@ export function useComments(data) {
 
   return {
     comments,
-    commentActions
+    actions
   }
 }

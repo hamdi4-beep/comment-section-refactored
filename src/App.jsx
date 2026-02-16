@@ -4,7 +4,7 @@ import FormComponent from './components/FormComponent'
 import { useComments } from './hooks'
 
 function App() {
-  const {comments, commentActions} = useComments(data)
+  const {comments, actions} = useComments(data)
   const sortedComments = [...comments].sort((a, b) => b.score - a.score)
 
   return (
@@ -14,12 +14,12 @@ function App() {
           <Comment
             key={parentComment.id}
             comment={parentComment}
-            commentActions={commentActions}
+            actions={actions}
           />
         ))}
       </div>
 
-      <FormComponent onSubmit={commentActions.createComment} />
+      <FormComponent onSubmit={actions.createComment} />
     </div>
   )
 }
