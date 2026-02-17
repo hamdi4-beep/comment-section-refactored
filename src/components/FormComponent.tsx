@@ -1,8 +1,10 @@
+import type { Comment } from "./Comment"
+
 function FormComponent({
     value = '',
     onSubmit
 }: {
-    value?: string
+    value?: Comment['content']
     onSubmit: (content: string) => void
 }) {
     const submitComment = async (formData: FormData) => {
