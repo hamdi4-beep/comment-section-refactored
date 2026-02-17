@@ -10,41 +10,54 @@ export interface Actions {
   decrementScore: (parentId: Comment['parentId'], id: Comment['id'], score: Comment['score'], currentScore: Comment['score']) => void
 }
 
-const updateComment = (tree: Comment[], parentId: Comment['parentId'], id: Comment['id'], props: Partial<Comment>) =>
-  tree.map((comment): Comment => {
+const updateComment = (state: Comment[], parentId: Comment['parentId'], id: Comment['id'], props: Partial<Comment>) =>
+  state.map((comment): Comment => {
     if (comment.id === parentId)
-      return Object.assign({}, comment, {
-        replies: updateComment(comment.replies ?? [], parentId, id, props)
-      })
+      return {
+        ...comment,
+        replies: updateComment(comment.replies, parentId, id, props)
+      }
 
     if (comment.id === id)
-      return Object.assign({}, comment, props)
+      return {
+        ...comment,
+        ...props
+      }
 
     return comment
   })
 
-const createReply = (tree: Comment[], id: Comment['id'], reply: Comment) =>
-  tree.map(comment => {
+const addReply = (state: Comment[], id: Comment['id'], reply: Comment) =>
+  state.map(comment => {
     if (comment.id === id)
-      return Object.assign({}, comment, {
-        replies: comment.replies?.concat(reply)
-      })
+      return {
+        ...comment,
+        replies: comment.replies.concat(reply)
+      }
 
     return comment
   })
 
-const filterComment = (tree: Comment[], parentId: Comment['parentId'], id: Comment['id']) =>
-  tree
+const filterComment = (state: Comment[], parentId: Comment['parentId'], id: Comment['id']) =>
+  state
     .filter(comment => comment.id !== id)
     .map(comment => {
-      if (comment.id === parentId) {
-        return Object.assign({}, comment, {
-          replies: comment.replies?.filter(reply => reply.id !== id)
-        })
-      }
+      if (comment.id === parentId)
+        return {
+          ...comment,
+          replies: comment.replies.filter(reply => reply.id !== id)
+        }
 
       return comment
     })
+
+const currentUser = {
+  image: { 
+    png: "/images/avatars/image-juliusomo.png",
+    webp: "/images/avatars/image-juliusomo.webp"
+  },
+  username: "juliusomo"
+}
 
 export function useComments(data: Comment[]) {
   const [comments, setComments] = React.useState(data)
@@ -58,13 +71,7 @@ export function useComments(data: Comment[]) {
         createdAt: "just now",
         score: 0,
         replyingTo: null,
-        user: {
-          image: { 
-            png: "/images/avatars/image-juliusomo.png",
-            webp: "/images/avatars/image-juliusomo.webp"
-          },
-          username: "juliusomo"
-        },
+        user: currentUser,
         replies: []
       }
 
@@ -80,17 +87,11 @@ export function useComments(data: Comment[]) {
         createdAt: "just now",
         score: 0,
         replyingTo: username,
-        user: {
-          image: { 
-            png: "/images/avatars/image-juliusomo.png",
-            webp: "/images/avatars/image-juliusomo.webp"
-          },
-          username: "juliusomo"
-        },
-        replies: null
+        user: currentUser,
+        replies: []
       }
 
-      setComments(prev => createReply(prev, targetId, newReply))
+      setComments(prev => addReply(prev, targetId, newReply))
     },
     deleteComment(parentId, id) {
       setComments(prev => filterComment(prev, parentId, id))

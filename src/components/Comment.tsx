@@ -1,6 +1,6 @@
 import { useState, useRef } from "react"
 import FormComponent from "./FormComponent"
-import { Actions } from "../hooks"
+import type { Actions } from "../hooks"
 
 export interface Comment {
   parentId: null | string
@@ -16,7 +16,7 @@ export interface Comment {
     }
     username: string
   }
-  replies: null | Comment[]
+  replies: Comment[]
 }
 
 function Comment({
@@ -120,7 +120,7 @@ function Comment({
       </div>
 
       <div className="reply-list">
-        {comment.replies && comment.replies.map(reply => (
+        {comment.replies.map(reply => (
           <Comment
             key={reply.id}
             comment={reply}
