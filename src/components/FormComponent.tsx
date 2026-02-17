@@ -1,10 +1,13 @@
 function FormComponent({
     value = '',
     onSubmit
+}: {
+    value?: string
+    onSubmit: (content: string) => void
 }) {
-    const submitComment = async formData => {
+    const submitComment = async (formData: FormData) => {
         const comment = formData.get('comment')
-        if (comment) onSubmit(comment)
+        if (comment) onSubmit(comment as string)
     }
 
     return (

@@ -1,11 +1,32 @@
 import { useState, useRef } from "react"
 import FormComponent from "./FormComponent"
+import { Actions } from "../hooks"
+
+export interface Comment {
+  parentId: null | string
+  id: string
+  content: string
+  createdAt: string
+  score: number
+  replyingTo: null | string
+  user: {
+    image: {
+      png: string
+      webp: string
+    }
+    username: string
+  }
+  replies: null | Comment[]
+}
 
 function Comment({
   comment,
   actions
+}: {
+  comment: Comment
+  actions: Actions
 }) {
-  const [formStatus, setFormStatus] = useState(null)
+  const [formStatus, setFormStatus] = useState<string | null>(null)
   const [isModalHidden, setIsModalHidden] = useState(true)
   // keeps track of the current score so the upvote and downvote update score relative to the current score.
   const currentScoreRef = useRef(comment.score)

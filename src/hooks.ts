@@ -1,45 +1,55 @@
 import * as React from 'react'
+import type { Comment } from './components/Comment'
 
-const updateComment = (tree, parentId, id, props) =>
-  tree.map(comment => {
+export interface Actions {
+  createComment: (content: string) => void
+  createReply: (parentId: Comment['parentId'], id: Comment['id'], username: Comment['replyingTo'], content: Comment['content']) => void
+  deleteComment: (parentId: Comment['parentId'], id: Comment['id']) => void
+  editComment: (parentId: Comment['parentId'], id: Comment['id'], content: Comment['content']) => void
+  incrementScore: (parentId: Comment['parentId'], id: Comment['id'], score: Comment['score'], currentScore: Comment['score']) => void
+  decrementScore: (parentId: Comment['parentId'], id: Comment['id'], score: Comment['score'], currentScore: Comment['score']) => void
+}
+
+const updateComment = (tree: Comment[], parentId: Comment['parentId'], id: Comment['id'], props: Partial<Comment>) =>
+  tree?.map((comment): Comment => {
     if (comment.id === id)
       return Object.assign({}, comment, props)
 
     if (comment.id === parentId)
       return Object.assign({}, comment, {
-        replies: updateComment(comment.replies, parentId, id, props)
+        replies: updateComment(comment.replies!, parentId, id, props)
       })
 
     return comment
   })
 
-const createReply = (tree, id, reply) =>
+const createReply = (tree: Comment[], id: Comment['id'], reply: Comment) =>
   tree.map(comment => {
     if (comment.id === id)
       return Object.assign({}, comment, {
-        replies: comment.replies.concat(reply)
+        replies: comment.replies?.concat(reply)
       })
 
     return comment
   })
 
-const filterComment = (tree, parentId, id) =>
+const filterComment = (tree: Comment[], parentId: Comment['parentId'], id: Comment['id']) =>
   tree
     .filter(comment => comment.id !== id)
     .map(comment => {
       if (comment.id === parentId) {
         return Object.assign({}, comment, {
-          replies: comment.replies.filter(reply => reply.id !== id)
+          replies: comment.replies?.filter(reply => reply.id !== id)
         })
       }
 
       return comment
     })
 
-export function useComments(data) {
+export function useComments(data: Comment[]) {
   const [comments, setComments] = React.useState(data)
 
-  const actions = {
+  const actions: Actions = {
     createComment(content) {
       const newComment = {
         parentId: null,
@@ -47,6 +57,7 @@ export function useComments(data) {
         content,
         createdAt: "just now",
         score: 0,
+        replyingTo: null,
         user: {
           image: { 
             png: "/images/avatars/image-juliusomo.png",
@@ -75,7 +86,8 @@ export function useComments(data) {
             webp: "/images/avatars/image-juliusomo.webp"
           },
           username: "juliusomo"
-        }
+        },
+        replies: null
       }
 
       setComments(prev => createReply(prev, targetId, newReply))
