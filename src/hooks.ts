@@ -11,7 +11,7 @@ export interface Actions {
 }
 
 const updateComment = (tree: Comment[], parentId: Comment['parentId'], id: Comment['id'], props: Partial<Comment>) =>
-  tree?.map((comment): Comment => {
+  tree.map((comment): Comment => {
     if (comment.id === id)
       return Object.assign({}, comment, props)
 

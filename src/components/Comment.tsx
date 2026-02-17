@@ -1,3 +1,4 @@
+/// <reference types="vite/client" />
 import { useState, useRef } from "react"
 import FormComponent from "./FormComponent"
 import { Actions } from "../hooks"
