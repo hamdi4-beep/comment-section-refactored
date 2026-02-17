@@ -2,7 +2,7 @@ import * as React from 'react'
 import type { Comment } from './components/Comment'
 
 export interface Actions {
-  createComment: (content: string) => void
+  createComment: (content: Comment['content']) => void
   createReply: (parentId: Comment['parentId'], id: Comment['id'], username: Comment['replyingTo'], content: Comment['content']) => void
   deleteComment: (parentId: Comment['parentId'], id: Comment['id']) => void
   editComment: (parentId: Comment['parentId'], id: Comment['id'], content: Comment['content']) => void
@@ -12,13 +12,13 @@ export interface Actions {
 
 const updateComment = (tree: Comment[], parentId: Comment['parentId'], id: Comment['id'], props: Partial<Comment>) =>
   tree.map((comment): Comment => {
-    if (comment.id === id)
-      return Object.assign({}, comment, props)
-
     if (comment.id === parentId)
       return Object.assign({}, comment, {
-        replies: updateComment(comment.replies!, parentId, id, props)
+        replies: updateComment(comment.replies ?? [], parentId, id, props)
       })
+
+    if (comment.id === id)
+      return Object.assign({}, comment, props)
 
     return comment
   })
