@@ -1,6 +1,6 @@
-import { useState, useRef } from "react"
+import { useState } from "react"
 import FormComponent from "./FormComponent"
-import { useComments, type Actions } from "../hooks"
+import { type Actions } from "../hooks"
 
 export interface Comment {
   parentId: null | string
@@ -31,12 +31,12 @@ const ScoreComponent = ({
   const [userVote, setUserVote] = useState<null | 'up' | 'down'>(null)
 
   const handleUpVoteClick = () => {
-    setUserVote('up')
+    setUserVote(prev => prev === 'down' ? null : 'up')
     incrementScore()
   }
 
   const handleDownVoteClick = () => {
-    setUserVote('down')
+    setUserVote(prev => prev === 'up' ? null : 'down')
     decrementScore()
   }
 
@@ -73,7 +73,7 @@ function Comment({
         <div className="comment">
           <ScoreComponent
             score={comment.score}
-            incrementScore={() => actions.updateScore(comment.parentId, comment.id, comment.score, 1)}
+            incrementScore={() => actions.updateScore(comment.parentId, comment.id, comment.score, +1)}
             decrementScore={() => actions.updateScore(comment.parentId, comment.id, comment.score, -1)}
           />
 
