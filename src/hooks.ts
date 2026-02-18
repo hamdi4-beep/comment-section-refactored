@@ -6,8 +6,7 @@ export interface Actions {
   createReply: (parentId: Comment['parentId'], id: Comment['id'], username: Comment['replyingTo'], content: Comment['content']) => void
   deleteComment: (parentId: Comment['parentId'], id: Comment['id']) => void
   editComment: (parentId: Comment['parentId'], id: Comment['id'], content: Comment['content']) => void
-  incrementScore: (parentId: Comment['parentId'], id: Comment['id'], score: Comment['score'], currentScore: Comment['score']) => void
-  decrementScore: (parentId: Comment['parentId'], id: Comment['id'], score: Comment['score'], currentScore: Comment['score']) => void
+  updateScore: (parentId: Comment['parentId'], id: Comment['id'], score: Comment['score'], delta: number) => void
 }
 
 const updateComment = (state: Comment[], parentId: Comment['parentId'], id: Comment['id'], props: Partial<Comment>) =>
@@ -96,17 +95,10 @@ export function useComments(data: Comment[]) {
     deleteComment(parentId, id) {
       setComments(prev => filterComment(prev, parentId, id))
     },
-    incrementScore(parentId, id, score, currentScore) {
+    updateScore(parentId, id, score, delta) {
       setComments(prev =>
         updateComment(prev, parentId, id, {
-          score: currentScore >= score ? score + 1 : score
-        })
-      )
-    },
-    decrementScore(parentId, id, score, currentScore) {
-      setComments(prev =>
-        updateComment(prev, parentId, id, {
-          score: currentScore <= score ? score - 1 : score
+          score: score + delta
         })
       )
     },

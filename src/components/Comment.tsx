@@ -1,6 +1,6 @@
 import { useState, useRef } from "react"
 import FormComponent from "./FormComponent"
-import type { Actions } from "../hooks"
+import { useComments, type Actions } from "../hooks"
 
 export interface Comment {
   parentId: null | string
@@ -19,6 +19,42 @@ export interface Comment {
   replies: Comment[]
 }
 
+const ScoreComponent = ({
+  score,
+  incrementScore,
+  decrementScore
+}: {
+  score: Comment['score']
+  incrementScore: () => void
+  decrementScore: () => void
+}) => {
+  const [userVote, setUserVote] = useState<null | 'up' | 'down'>(null)
+
+  const handleUpVoteClick = () => {
+    setUserVote('up')
+    incrementScore()
+  }
+
+  const handleDownVoteClick = () => {
+    setUserVote('down')
+    decrementScore()
+  }
+
+  return (
+    <div className="score-component">
+      <button onClick={handleUpVoteClick} disabled={userVote === 'up'}>
+        <img src={import.meta.env.BASE_URL + '/images/icon-plus.svg'} alt="plus icon for upvoting" />
+      </button>
+
+      <span className="comment-score">{score}</span>
+
+      <button onClick={handleDownVoteClick} disabled={userVote === 'down'}>
+        <img src={import.meta.env.BASE_URL + '/images/icon-minus.svg'} alt="minus icon for downvoting" />
+      </button>
+    </div>
+  )
+}
+
 function Comment({
   comment,
   actions
@@ -28,8 +64,6 @@ function Comment({
 }) {
   const [formStatus, setFormStatus] = useState<string | null>(null)
   const [isModalHidden, setIsModalHidden] = useState(true)
-  // keeps track of the current score so the upvote and downvote update score relative to the current score.
-  const currentScoreRef = useRef(comment.score)
   // mimicks user authentication - just for demo purposes
   const isCurrentUser = comment.user.username === 'juliusomo'
 
@@ -37,17 +71,11 @@ function Comment({
     <div className="container">
       <div className="wrapper">
         <div className="comment">
-          <div className="score-component">
-            <button onClick={() => actions.incrementScore(comment.parentId, comment.id, comment.score, currentScoreRef.current)}>
-              <img src={import.meta.env.BASE_URL + '/images/icon-plus.svg'} alt="plus icon for upvoting" />
-            </button>
-
-            <span className="comment-score">{comment.score}</span>
-
-            <button onClick={() => actions.decrementScore(comment.parentId, comment.id, comment.score, currentScoreRef.current)}>
-              <img src={import.meta.env.BASE_URL + '/images/icon-minus.svg'} alt="minus icon for downvoting" />
-            </button>
-          </div>
+          <ScoreComponent
+            score={comment.score}
+            incrementScore={() => actions.updateScore(comment.parentId, comment.id, comment.score, 1)}
+            decrementScore={() => actions.updateScore(comment.parentId, comment.id, comment.score, -1)}
+          />
 
           <div className="content">
             <div className="card-header">
