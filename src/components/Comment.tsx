@@ -16,7 +16,7 @@ export interface Comment {
     }
     username: string
   }
-  replies: Comment[]
+  replies: null | Comment[]
 }
 
 const ScoreComponent = ({
@@ -148,7 +148,7 @@ function Comment({
       </div>
 
       <div className="reply-list">
-        {comment.replies.map(reply => (
+        {comment.replies && comment.replies.map(reply => (
           <Comment
             key={reply.id}
             comment={reply}

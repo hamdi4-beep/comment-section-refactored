@@ -3,7 +3,7 @@ import type { Comment } from './components/Comment'
 
 export interface Actions {
   createComment: (content: Comment['content']) => void
-  createReply: (parentId: Comment['parentId'], id: Comment['id'], username: Comment['replyingTo'], content: Comment['content']) => void
+  createReply: (parentId: Comment['parentId'], id: Comment['id'], replyingTo: Comment['replyingTo'], content: Comment['content']) => void
   deleteComment: (parentId: Comment['parentId'], id: Comment['id']) => void
   editComment: (parentId: Comment['parentId'], id: Comment['id'], content: Comment['content']) => void
   updateScore: (parentId: Comment['parentId'], id: Comment['id'], currentScore: Comment['score'], delta: number) => void
@@ -11,7 +11,8 @@ export interface Actions {
 
 const updateComment = (state: Comment[], parentId: Comment['parentId'], id: Comment['id'], props: Partial<Comment>) =>
   state.map((comment): Comment => {
-    if (comment.id === parentId)
+    // updates a parent comment if that's where the targeted reply is located
+    if (comment.id === parentId && comment.replies)
       return {
         ...comment,
         replies: updateComment(comment.replies, parentId, id, props)
@@ -28,7 +29,7 @@ const updateComment = (state: Comment[], parentId: Comment['parentId'], id: Comm
 
 const addReply = (state: Comment[], id: Comment['id'], reply: Comment) =>
   state.map(comment => {
-    if (comment.id === id)
+    if (comment.id === id && comment.replies)
       return {
         ...comment,
         replies: comment.replies.concat(reply)
@@ -41,7 +42,7 @@ const filterComment = (state: Comment[], parentId: Comment['parentId'], id: Comm
   state
     .filter(comment => comment.id !== id)
     .map(comment => {
-      if (comment.id === parentId)
+      if (comment.id === parentId && comment.replies)
         return {
           ...comment,
           replies: comment.replies.filter(reply => reply.id !== id)
@@ -63,7 +64,7 @@ export function useComments(data: Comment[]) {
 
   const actions: Actions = {
     createComment(content) {
-      const newComment = {
+      const newComment: Comment = {
         parentId: null,
         id: crypto.randomUUID(),
         content,
@@ -76,18 +77,18 @@ export function useComments(data: Comment[]) {
 
       setComments(prev => [...prev, newComment])
     },
-    createReply(parentId, id, username, content) {
+    createReply(parentId, id, replyingTo, content) {
       const targetId = parentId || id
 
-      const newReply = {
+      const newReply: Comment = {
         parentId: targetId,
         id: crypto.randomUUID(),
         content,
         createdAt: "just now",
         score: 0,
-        replyingTo: username,
+        replyingTo,
         user: currentUser,
-        replies: []
+        replies: null
       }
 
       setComments(prev => addReply(prev, targetId, newReply))
