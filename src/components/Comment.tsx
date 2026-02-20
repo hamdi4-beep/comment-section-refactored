@@ -28,27 +28,27 @@ const ScoreComponent = ({
   incrementScore: () => void
   decrementScore: () => void
 }) => {
-  const [userVote, setUserVote] = useState<null | 'up' | 'down'>(null)
+  const [voteStatus, setVoteStatus] = useState<null | 'up' | 'down'>(null)
 
   const handleUpVoteClick = () => {
-    setUserVote(prev => prev === 'down' ? null : 'up')
+    setVoteStatus(prev => prev === 'down' ? null : 'up')
     incrementScore()
   }
 
   const handleDownVoteClick = () => {
-    setUserVote(prev => prev === 'up' ? null : 'down')
+    setVoteStatus(prev => prev === 'up' ? null : 'down')
     decrementScore()
   }
 
   return (
     <div className="score-component">
-      <button onClick={handleUpVoteClick} disabled={userVote === 'up'}>
+      <button onClick={handleUpVoteClick} disabled={voteStatus === 'up'}>
         <img src={import.meta.env.BASE_URL + '/images/icon-plus.svg'} alt="plus icon for upvoting" />
       </button>
 
       <span className="comment-score">{score}</span>
 
-      <button onClick={handleDownVoteClick} disabled={userVote === 'down'}>
+      <button onClick={handleDownVoteClick} disabled={voteStatus === 'down'}>
         <img src={import.meta.env.BASE_URL + '/images/icon-minus.svg'} alt="minus icon for downvoting" />
       </button>
     </div>
