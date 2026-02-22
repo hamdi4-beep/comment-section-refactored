@@ -38,10 +38,9 @@ const addReply = (state: Comment[], id: Comment['id'], reply: Comment) =>
     return comment
   })
 
-const filterComment = (state: Comment[], parentId: Comment['parentId'], id: Comment['id']) =>
-  state
-    .filter(comment => comment.id !== id)
-    .map(comment => {
+const filterComment = (state: Comment[], parentId: Comment['parentId'], id: Comment['id']) => {
+  if (parentId)
+    return state.map(comment => {
       if (comment.id === parentId && comment.replies)
         return {
           ...comment,
@@ -50,6 +49,9 @@ const filterComment = (state: Comment[], parentId: Comment['parentId'], id: Comm
 
       return comment
     })
+
+  return state.filter(comment => comment.id !== id)
+}
 
 const currentUser = {
   image: { 

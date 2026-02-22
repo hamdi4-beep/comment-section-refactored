@@ -67,6 +67,16 @@ function Comment({
   // mimicks user authentication - just for demo purposes
   const isCurrentUser = comment.user.username === 'juliusomo'
 
+  const handleReplySubmit = (content: Comment['content']) => {
+    actions.createReply(comment.parentId, comment.id, comment.user.username, content)
+    setFormStatus(null)
+  }
+
+  const handleEditSubmit = (content: Comment['content']) => {
+    actions.editComment(comment.parentId, comment.id, content)
+    setFormStatus(null)
+  }
+
   return (
     <div className="container">
       <div className="wrapper">
@@ -124,13 +134,13 @@ function Comment({
         </div>
 
         {formStatus === 'replying' && (
-          <FormComponent onSubmit={content => actions.createReply(comment.parentId, comment.id, comment.user.username, content)} />
+          <FormComponent onSubmit={handleReplySubmit} />
         )}
 
         {formStatus === 'editing' && (
           <FormComponent
             value={comment.content}
-            onSubmit={content => actions.editComment(comment.parentId, comment.id, content)}
+            onSubmit={handleEditSubmit}
           />
         )}
 
@@ -147,15 +157,17 @@ function Comment({
         )}
       </div>
 
-      <div className="reply-list">
-        {comment.replies && comment.replies.map(reply => (
-          <Comment
-            key={reply.id}
-            comment={reply}
-            actions={actions}
-          />
-        ))}
-      </div>
+      {comment.replies && (
+        <div className="reply-list">
+          {comment.replies.map(reply => (
+            <Comment
+              key={reply.id}
+              comment={reply}
+              actions={actions}
+            />
+          ))}
+        </div>
+      )}
     </div>
   )
 }

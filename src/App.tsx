@@ -10,10 +10,10 @@ function App() {
   return (
     <div className="App">
       <div className="comment-list">
-        {sortedComments.map(parentComment => (
+        {sortedComments.map(comment => (
           <Comment
-            key={parentComment.id}
-            comment={parentComment}
+            key={comment.id}
+            comment={comment}
             actions={actions}
           />
         ))}
