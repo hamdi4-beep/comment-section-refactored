@@ -45,6 +45,23 @@ const filterComment = (state: Comment[], parentId: Comment['parentId'], id: Comm
   return state.filter(comment => comment.id !== id)
 }
 
+const voteComment = (state: Comment[], parentId: Comment['parentId'], id: Comment['id'], delta: number) =>
+  state.map((comment): Comment => {
+    if (comment.id === parentId && comment.replies)
+      return {
+        ...comment,
+        replies: voteComment(comment.replies, parentId, id, delta)
+      }
+
+    if (comment.id === id)
+      return {
+        ...comment,
+        score: comment.score + delta
+      }
+
+    return comment
+  })
+
 const currentUser = {
   image: { 
     png: "/images/avatars/image-juliusomo.png",
@@ -69,7 +86,7 @@ export function useComments(data: Comment[]) {
         replies: []
       }
 
-      setComments(prev => [...prev, newComment])
+      setComments(state => [...state, newComment])
     },
     createReply(parentId, id, replyingTo, content) {
       const targetId = parentId || id
@@ -85,21 +102,17 @@ export function useComments(data: Comment[]) {
         replies: null
       }
 
-      setComments(prev => addReply(prev, targetId, newReply))
+      setComments(state => addReply(state, targetId, newReply))
     },
     deleteComment(parentId, id) {
-      setComments(prev => filterComment(prev, parentId, id))
+      setComments(state => filterComment(state, parentId, id))
     },
-    updateScore(parentId, id, currentScore, delta) {
-      setComments(prev =>
-        updateComment(prev, parentId, id, {
-          score: currentScore + delta
-        })
-      )
+    updateScore(parentId, id, delta) {
+      setComments(state => voteComment(state, parentId, id, delta))
     },
     editComment(parentId, id, content) {
-      setComments(prev =>
-        updateComment(prev, parentId, id, {
+      setComments(state =>
+        updateComment(state, parentId, id, {
           content
         })
       )

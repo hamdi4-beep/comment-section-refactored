@@ -66,8 +66,8 @@ function Comment({
         <div className="comment">
           <ScoreComponent
             score={comment.score}
-            incrementScore={() => actions.updateScore(comment.parentId, comment.id, comment.score, +1)}
-            decrementScore={() => actions.updateScore(comment.parentId, comment.id, comment.score, -1)}
+            incrementScore={() => actions.updateScore(comment.parentId, comment.id, +1)}
+            decrementScore={() => actions.updateScore(comment.parentId, comment.id, -1)}
           />
 
           <div className="content">

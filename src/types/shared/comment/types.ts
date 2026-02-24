@@ -20,5 +20,5 @@ export interface Actions {
   createReply: (parentId: Comment['parentId'], id: Comment['id'], replyingTo: Comment['replyingTo'], content: Comment['content']) => void
   deleteComment: (parentId: Comment['parentId'], id: Comment['id']) => void
   editComment: (parentId: Comment['parentId'], id: Comment['id'], content: Comment['content']) => void
-  updateScore: (parentId: Comment['parentId'], id: Comment['id'], currentScore: Comment['score'], delta: number) => void
+  updateScore: (parentId: Comment['parentId'], id: Comment['id'], delta: number) => void
 }
