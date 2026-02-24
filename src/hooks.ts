@@ -1,13 +1,5 @@
 import * as React from 'react'
-import type { Comment } from './components/Comment'
-
-export interface Actions {
-  createComment: (content: Comment['content']) => void
-  createReply: (parentId: Comment['parentId'], id: Comment['id'], replyingTo: Comment['replyingTo'], content: Comment['content']) => void
-  deleteComment: (parentId: Comment['parentId'], id: Comment['id']) => void
-  editComment: (parentId: Comment['parentId'], id: Comment['id'], content: Comment['content']) => void
-  updateScore: (parentId: Comment['parentId'], id: Comment['id'], currentScore: Comment['score'], delta: number) => void
-}
+import type { Comment, Actions } from './types/shared/comment/types'
 
 const updateComment = (state: Comment[], parentId: Comment['parentId'], id: Comment['id'], props: Partial<Comment>) =>
   state.map((comment): Comment => {

@@ -1,23 +1,6 @@
 import { useState } from "react"
 import FormComponent from "./FormComponent"
-import { type Actions } from "../hooks"
-
-export interface Comment {
-  parentId: null | string
-  id: string
-  content: string
-  createdAt: string
-  score: number
-  replyingTo: null | string
-  user: {
-    image: {
-      png: string
-      webp: string
-    }
-    username: string
-  }
-  replies: null | Comment[]
-}
+import type { Comment, Actions } from "../types/shared/comment/types"
 
 const ScoreComponent = ({
   score,
