@@ -1,5 +1,5 @@
 import * as React from 'react'
-import type { Comment, Actions } from './types/shared/comment/types'
+import type { Comment, Actions } from './types/comment/types'
 
 const updateComment = (state: Comment[], parentId: Comment['parentId'], id: Comment['id'], props: Partial<Comment>) =>
   state.map((comment): Comment => {

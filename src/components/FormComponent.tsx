@@ -1,4 +1,4 @@
-import type { Comment } from "./Comment"
+import type { Comment } from "../types/comment/types"
 
 function FormComponent({
     value = '',

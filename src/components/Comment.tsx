@@ -1,6 +1,6 @@
 import { useState } from "react"
 import FormComponent from "./FormComponent"
-import type { Comment, Actions } from "../types/shared/comment/types"
+import type { Comment, Actions } from "../types/comment/types"
 
 const ScoreComponent = ({
   score,
