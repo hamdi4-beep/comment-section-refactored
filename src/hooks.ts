@@ -1,20 +1,17 @@
 import * as React from 'react'
 import type { Comment, Actions } from './types/comment/types'
 
-const updateComment = (state: Comment[], parentId: Comment['parentId'], id: Comment['id'], props: Partial<Comment>) =>
+const updateComment = (state: Comment[], parentId: Comment['parentId'], id: Comment['id'], updater: (comment: Comment) => Comment) =>
   state.map((comment): Comment => {
     // updates a parent comment if that's where the targeted reply is located
     if (comment.id === parentId && comment.replies)
       return {
         ...comment,
-        replies: updateComment(comment.replies, parentId, id, props)
+        replies: updateComment(comment.replies, parentId, id, updater)
       }
 
     if (comment.id === id)
-      return {
-        ...comment,
-        ...props
-      }
+      return updater(comment)
 
     return comment
   })
@@ -44,23 +41,6 @@ const filterComment = (state: Comment[], parentId: Comment['parentId'], id: Comm
 
   return state.filter(comment => comment.id !== id)
 }
-
-const voteComment = (state: Comment[], parentId: Comment['parentId'], id: Comment['id'], delta: number) =>
-  state.map((comment): Comment => {
-    if (comment.id === parentId && comment.replies)
-      return {
-        ...comment,
-        replies: voteComment(comment.replies, parentId, id, delta)
-      }
-
-    if (comment.id === id)
-      return {
-        ...comment,
-        score: comment.score + delta
-      }
-
-    return comment
-  })
 
 const currentUser = {
   image: { 
@@ -108,13 +88,19 @@ export function useComments(data: Comment[]) {
       setComments(state => filterComment(state, parentId, id))
     },
     updateScore(parentId, id, delta) {
-      setComments(state => voteComment(state, parentId, id, delta))
+      setComments(state =>
+        updateComment(state, parentId, id, comment => ({
+          ...comment,
+          score: comment.score + delta
+        }))
+      )
     },
     editComment(parentId, id, content) {
       setComments(state =>
-        updateComment(state, parentId, id, {
+        updateComment(state, parentId, id, comment => ({
+          ...comment,
           content
-        })
+        }))
       )
     }
   }
