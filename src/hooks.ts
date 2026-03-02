@@ -1,5 +1,6 @@
 import * as React from 'react'
 import type { Comment, Actions } from './types/comment/types'
+import data from '../data/comments.json'
 
 const updateComment = (state: Comment[], parentId: Comment['parentId'], id: Comment['id'], updater: (comment: Comment) => Comment) =>
   state.map((comment): Comment => {
@@ -50,8 +51,8 @@ const currentUser = {
   username: "juliusomo"
 }
 
-export function useComments(data: Comment[]) {
-  const [comments, setComments] = React.useState(data)
+export function useComments() {
+  const [comments, setComments] = React.useState<Comment[]>(data)
 
   const actions: Actions = {
     createComment(content) {

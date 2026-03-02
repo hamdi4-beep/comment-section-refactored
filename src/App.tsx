@@ -1,10 +1,9 @@
-import data from '../data/comments.json'
 import Comment from './components/Comment'
 import FormComponent from './components/FormComponent'
 import { useComments } from './hooks'
 
 function App() {
-  const {comments, actions} = useComments(data)
+  const {comments, actions} = useComments()
 
   return (
     <div className="App">
