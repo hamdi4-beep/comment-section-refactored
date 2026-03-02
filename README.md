@@ -1,171 +1,103 @@
-# Interactive Comment Section
+# Comment Section
 
-A React-based threaded comment system demonstrating state management, recursive rendering, and immutable data patterns. Built with React 19, Vite, and vanilla CSS.
-
-**[Live Demo](https://hamdi4-beep.github.io/comment-section-refactored)**
-
----
-
-## Features
-
-- **Threaded Discussions**: Unlimited nesting depth with recursive rendering
-- **Vote System**: Upvote/downvote with spam prevention
-- **CRUD Operations**: Create, reply, edit, and delete comments
-- **Auto-Sorting**: Comments sorted by score (highest first)
-- **Responsive Design**: Mobile-optimized layout
-
----
-
-## Tech Stack
-
-- **React 19** - UI library
-- **Vite 7** - Build tool
-- **Vitest** - Testing framework
-- **Vanilla CSS** - Styling (no framework dependencies)
-
----
-
-## Getting Started
-
-### Installation
-```bash
-# Clone the repository
-git clone https://github.com/hamdi4-beep/comment-section-refactored.git
-cd comment-section-refactored
-
-# Install dependencies
-pnpm install
-
-# Start development server
-pnpm dev
-```
-
-Visit `http://localhost:5173`
-
-### Build for Production
-```bash
-pnpm build      # Creates dist/ folder
-pnpm preview    # Preview production build
-```
-
-### Deploy to GitHub Pages
-```bash
-pnpm deploy
-```
-
----
-
-## Project Structure
-```
-src/
-├── App.jsx                 # Root component
-├── components/
-│   ├── Comment.jsx         # Recursive comment renderer
-│   └── FormComponent.jsx   # Reusable input form
-├── hooks.js                # useComments custom hook
-├── css/
-│   └── index.css           # Global styles
-├── test/                   # Test files
-└── main.jsx                # React entry point
-
-data/
-└── comments.json           # Initial comment data
-
-public/
-└── images/                 # Icons and avatars
-```
+A self-contained interactive comment section built with React. Supports nested replies, voting, editing, and deletion — all managed through a single custom hook.
 
 ---
 
 ## Architecture
 
-### State Management
+State and mutations live entirely in `useComments` (`src/hooks.ts`), which exposes a `comments` array and an `actions` object to the rest of the app. Components receive both as props and never reach outside them — they either render data or call an action.
 
-All comment operations are centralized in the `useComments` hook (`src/hooks.js`):
-```javascript
-const {comments, actions} = useComments(data)
+```
+App
+├── useComments()        ← owns all comment state and mutations
+├── Comment              ← recursive; renders a comment and its replies
+│   ├── ScoreComponent   ← voting UI with local vote-direction state
+│   └── FormComponent    ← shared form for new comments, replies, and edits
+└── FormComponent        ← bottom-of-page form for new top-level comments
 ```
 
-**Available Actions:**
-- `createComment(content)` - Add top-level comment
-- `createReply(parentId, id, username, content)` - Add reply
-- `deleteComment(parentId, id)` - Remove comment/reply
-- `incrementScore(parentId, id, score, currentScore)` - Upvote
-- `decrementScore(parentId, id, score, currentScore)` - Downvote
-- `editComment(parentId, id, content)` - Update comment text
+The three layers have distinct responsibilities:
 
-### Data Model
+- **Data layer** (`types/comment/types.ts`) — defines the shape of a comment and the actions interface
+- **Hook layer** (`hooks.ts`) — owns comment state; exposes only an opaque `actions` object to consumers
+- **Presentation layer** (`components/`) — renders data and delegates mutations upward via `actions`
 
-Comments use a nested structure where replies are stored in a `replies` array:
-```javascript
-{
-  id: string,
-  content: string,
-  createdAt: string,
-  score: number,
-  user: { username, image },
-  replies: Comment[],      // Recursive nesting
-  replyingTo?: string      // Only present in replies
+---
+
+## Data Model
+
+```ts
+interface Comment {
+  id: string
+  parentId: string | null   // null for top-level; points to the top-level parent for replies
+  content: string
+  createdAt: string
+  score: number
+  replyingTo: string | null // username being replied to, null for top-level
+  user: { username: string; image: { png: string; webp: string } }
+  replies: Comment[] | null // array for top-level comments, null for replies
 }
 ```
 
-### Immutable Updates
+Nesting is intentionally shallow — replies-to-replies are still stored under the original top-level comment rather than recursively nested. `parentId` always points to a top-level comment, which keeps traversal in the hook straightforward: one level of recursion covers all cases.
 
-Tree operations use functional patterns to ensure React detects changes:
-```javascript
-const updateComment = (tree, parentId, id, props) =>
-  tree.map(comment => {
-    if (comment.id === id)
-      return Object.assign({}, comment, props)
-    
-    if (comment.id === parentId)
-      return Object.assign({}, comment, {
-        replies: updateComment(comment.replies, parentId, id, props)
-      })
-    
-    return comment
-  })
+---
+
+## `useComments` Hook
+
+```ts
+const { comments, actions } = useComments(initialData)
 ```
 
+Initialises comment state from `initialData` and returns it alongside an `actions` object. All mutations produce a new state array — nothing is mutated in place.
+
+### Actions
+
+| Action | Signature | Description |
+|---|---|---|
+| `createComment` | `(content) => void` | Appends a new top-level comment |
+| `createReply` | `(parentId, id, replyingTo, content) => void` | Appends a reply to a top-level comment. When replying to a nested reply, `parentId` is used to find the correct parent |
+| `editComment` | `(parentId, id, content) => void` | Updates the `content` field of a comment or reply |
+| `deleteComment` | `(parentId, id) => void` | Removes a comment. Passes `null` as `parentId` for top-level deletions |
+| `updateScore` | `(parentId, id, delta) => void` | Adds `delta` (+1 or -1) to a comment's score |
+
 ---
 
-## Testing
-```bash
-pnpm test              # Run tests
-pnpm test:ui           # Open Vitest UI
-pnpm test:coverage     # Generate coverage report
+## Components
+
+### `Comment`
+
+Recursive component. Renders a comment card, then maps over `comment.replies` — each rendered with another `Comment` — producing the nested reply list.
+
+`formStatus` local state (`null | 'replying' | 'editing'`) controls which inline form is visible at a time. Only one can be open per comment instance.
+
+User permissions are simulated by comparing `comment.user.username` against a hardcoded string (`'juliusomo'`). Comments belonging to the current user show Edit and Delete; all others show Reply.
+
+Deletion goes through a confirmation modal rather than firing immediately. The modal renders inline and a CSS `::after` pseudo-element on `body` provides the backdrop via `:has(.delete-modal)`.
+
+### `FormComponent`
+
+Used in three contexts:
+
+| Context | `value` prop | `onSubmit` callback |
+|---|---|---|
+| New top-level comment | `''` (default) | `actions.createComment` |
+| Reply | `''` (default) | `handleReplySubmit` → `actions.createReply` |
+| Edit | Pre-filled with existing content | `handleEditSubmit` → `actions.editComment` |
+
+Uses React 19's form action API (`<form action={asyncFn}>`). Submission is a no-op if the textarea is empty.
+
+### `ScoreComponent`
+
+Holds its own `voteStatus` state (`null | 'up' | 'down'`) to prevent voting in the same direction twice. This state is local and ephemeral — it resets if the component unmounts. The actual score lives in the hook.
+
+---
+
+## Sorting
+
+Comments are sorted by score descending at render time in `App`, not stored pre-sorted in state. This means the order updates reactively whenever a score changes.
+
+```ts
+const sortedComments = [...comments].sort((a, b) => b.score - a.score)
 ```
-
-**Test Coverage:**
-- Component tests (`Comment.test.jsx`, `FormComponent.test.jsx`)
-- Hook tests (`hooks.test.js`)
-- Integration tests (`App.test.jsx`)
-
----
-
-## Known Limitations
-
-1. **No Persistence**: Data resets on page reload (client-only, no backend)
-2. **Mock Authentication**: Uses hardcoded username (`juliusomo`)
-3. **No Real-Time Updates**: Single-user experience
-4. **Performance**: Full tree re-renders on state changes (no memoization)
-
----
-
-## License
-
-MIT License - see [LICENSE](LICENSE) file for details
-
----
-
-## Author
-
-**Hamdi** - [GitHub](https://github.com/hamdi4-beep)
-
----
-
-## Acknowledgments
-
-- Challenge from [Frontend Mentor](https://www.frontendmentor.io)
-- Design assets provided by Frontend Mentor
-- Built as a portfolio demonstration piece
