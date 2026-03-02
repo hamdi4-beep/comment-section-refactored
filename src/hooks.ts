@@ -120,7 +120,7 @@ export function useComments(data: Comment[]) {
   }
 
   return {
-    comments,
+    comments: [...comments].sort((a, b) => b.score - a.score),
     actions
   }
 }

@@ -5,12 +5,11 @@ import { useComments } from './hooks'
 
 function App() {
   const {comments, actions} = useComments(data)
-  const sortedComments = [...comments].sort((a, b) => b.score - a.score)
 
   return (
     <div className="App">
       <div className="comment-list">
-        {sortedComments.map(comment => (
+        {comments.map(comment => (
           <Comment
             key={comment.id}
             comment={comment}
