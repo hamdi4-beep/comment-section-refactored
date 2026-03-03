@@ -3,45 +3,23 @@ import type { Comment, Actions } from './types/comment/types'
 import data from '../data/comments.json'
 
 const updateComment = (state: Comment[], parentId: Comment['parentId'], id: Comment['id'], updater: (comment: Comment) => Comment) =>
-  state.map((comment): Comment => {
-    // updates a parent comment if that's where the targeted reply is located
-    if (comment.id === parentId && comment.replies)
-      return {
-        ...comment,
-        replies: updateComment(comment.replies, parentId, id, updater)
-      }
-
-    if (comment.id === id)
-      return updater(comment)
-
-    return comment
-  })
+  state.map((comment): Comment =>
+    comment.id === parentId && comment.replies ? {...comment, replies: updateComment(comment.replies, parentId, id, updater)} :
+      comment.id === id ? updater(comment) : comment
+  )
 
 const addReply = (state: Comment[], id: Comment['id'], reply: Comment) =>
-  state.map(comment => {
-    if (comment.id === id && comment.replies)
-      return {
-        ...comment,
-        replies: comment.replies.concat(reply)
-      }
+  state.map(comment =>
+    comment.id === id && comment.replies ?
+      {...comment, replies: comment.replies.concat(reply)} : comment
+  )
 
-    return comment
-  })
-
-const filterComment = (state: Comment[], parentId: Comment['parentId'], id: Comment['id']) => {
-  if (parentId)
-    return state.map(comment => {
-      if (comment.id === parentId && comment.replies)
-        return {
-          ...comment,
-          replies: comment.replies.filter(reply => reply.id !== id)
-        }
-
-      return comment
-    })
-
-  return state.filter(comment => comment.id !== id)
-}
+const filterComment = (state: Comment[], parentId: Comment['parentId'], id: Comment['id']) =>
+  parentId ?
+    state.map(comment =>
+      comment.id === parentId && comment.replies ?
+        {...comment, replies: comment.replies.filter(reply => reply.id !== id)} : comment
+    ) : state.filter(comment => comment.id !== id)
 
 const currentUser = {
   image: { 
@@ -89,19 +67,21 @@ export function useComments() {
       setComments(state => filterComment(state, parentId, id))
     },
     updateScore(parentId, id, delta) {
-      setComments(state =>
-        updateComment(state, parentId, id, comment => ({
+      const scoreUpdate = (comment: Comment) => ({
           ...comment,
           score: comment.score + delta
-        }))
-      )
+        })
+
+      setComments(state => updateComment(state, parentId, id, scoreUpdate))
     },
     editComment(parentId, id, content) {
-      setComments(state =>
-        updateComment(state, parentId, id, comment => ({
+      const contentUpdate = (comment: Comment) => ({
           ...comment,
           content
-        }))
+        })
+
+      setComments(state =>
+        updateComment(state, parentId, id, contentUpdate)
       )
     }
   }
