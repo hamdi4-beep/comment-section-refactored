@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, memo } from "react"
 import FormComponent from "./FormComponent"
 import type { Comment, Actions } from "../types/comment/types"
 
@@ -38,7 +38,7 @@ const ScoreComponent = ({
   )
 }
 
-function Comment({
+const Comment = memo(function Comment({
   comment,
   actions
 }: {
@@ -51,12 +51,12 @@ function Comment({
   const isCurrentUser = comment.user.username === 'juliusomo'
 
   const handleReplySubmit = (content: Comment['content']) => {
-    actions.createReply(comment.parentId, comment.id, comment.user.username, content)
+    actions.createReply(comment.id, comment.user.username, content)
     setFormStatus(null)
   }
 
   const handleEditSubmit = (content: Comment['content']) => {
-    actions.editComment(comment.parentId, comment.id, content)
+    actions.editComment(comment.id, content)
     setFormStatus(null)
   }
 
@@ -66,8 +66,8 @@ function Comment({
         <div className="comment">
           <ScoreComponent
             score={comment.score}
-            incrementScore={() => actions.updateScore(comment.parentId, comment.id, +1)}
-            decrementScore={() => actions.updateScore(comment.parentId, comment.id, -1)}
+            incrementScore={() => actions.updateScore(comment.id, +1)}
+            decrementScore={() => actions.updateScore(comment.id, -1)}
           />
 
           <div className="content">
@@ -134,7 +134,7 @@ function Comment({
             
             <div className="action-buttons">
               <button className="cancel-action" onClick={() => setIsModalHidden(true)}>No, Cancel</button>
-              <button className="delete-action" onClick={() => actions.deleteComment(comment.parentId, comment.id)}>Yes, Delete</button>
+              <button className="delete-action" onClick={() => actions.deleteComment(comment.id)}>Yes, Delete</button>
             </div>
           </div>
         )}
@@ -153,6 +153,6 @@ function Comment({
       )}
     </div>
   )
-}
+})
 
 export default Comment

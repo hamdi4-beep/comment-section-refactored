@@ -1,5 +1,4 @@
 export interface Comment {
-  parentId: null | string
   id: string
   content: string
   createdAt: string
@@ -12,13 +11,13 @@ export interface Comment {
     }
     username: string
   }
-  replies: null | Comment[]
+  replies: Comment[]
 }
 
 export interface Actions {
   createComment: (content: Comment['content']) => void
-  createReply: (parentId: Comment['parentId'], id: Comment['id'], replyingTo: Comment['replyingTo'], content: Comment['content']) => void
-  deleteComment: (parentId: Comment['parentId'], id: Comment['id']) => void
-  editComment: (parentId: Comment['parentId'], id: Comment['id'], content: Comment['content']) => void
-  updateScore: (parentId: Comment['parentId'], id: Comment['id'], delta: number) => void
+  createReply: (id: Comment['id'], replyingTo: Comment['replyingTo'], content: Comment['content']) => void
+  deleteComment: (id: Comment['id']) => void
+  editComment: (id: Comment['id'], content: Comment['content']) => void
+  updateScore: (id: Comment['id'], delta: number) => void
 }
