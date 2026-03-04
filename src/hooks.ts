@@ -2,46 +2,13 @@ import * as React from 'react'
 import type { Comment, Actions } from './types/comment/types'
 import data from '../data/comments.json'
 
-function updateComment(state: Comment[], id: Comment['id'], updater: (comment: Comment) => Comment) {
-  const update = (comments: Comment[]): Comment[] =>
-    comments.map(comment => {
-      if (comment.id === id) return updater(comment)
+const updateComment = (state: Comment[], id: Comment['id'], updater: (comment: Comment) => Comment) =>
+  state.map(comment =>
+    comment.id === id ? updater(comment) : comment
+  )
 
-      if (comment.replies.length > 0) {
-        const replies = update(comment.replies)
-        return comment.replies.some((r, i) => r !== replies[i]) ? {...comment, replies} : comment
-      }
-
-      return comment
-    })
-
-  return update(state)
-}
-
-// const updateComment = (state: Comment[], parentId: Comment['parentId'], id: Comment['id'], updater: (comment: Comment) => Comment) =>
-//   state.map((comment): Comment =>
-//     comment.id === parentId && comment.replies ? {...comment, replies: updateComment(comment.replies, parentId, id, updater)} :
-//       comment.id === id ? updater(comment) : comment
-//   )
-
-const filterComment = (state: Comment[], id: Comment['id']) => {
-  const filter = (comments: Comment[]): Comment[] => {
-    const filtered = comments.filter(comment => comment.id !== id)
-
-    if (filtered.length !== state.length) return filtered
-
-    return comments.map(comment => {
-      if (comment.replies.length > 0) {
-        const replies = filter(comment.replies)
-        return comment.replies.some((r, i) => r !== replies[i]) ? {...comment, replies} : comment
-      }
-
-      return comment
-    })
-  }
-
-    return filter(state)
-}
+const filterComment = (state: Comment[], id: Comment['id']) =>
+  state.filter(comment => comment.id !== id)
 
 const currentUser = {
   image: { 
@@ -51,12 +18,29 @@ const currentUser = {
   username: "juliusomo"
 }
 
+const buildTree = (comments: Comment[]) => {
+  const map = new Map(comments.map(comment => [comment.id, {...comment, replies: [] as Comment[]}]))
+  const roots = [] as Comment[]
+
+  map.forEach(comment => {
+    if (!comment.parentId) {
+      roots.push(comment)
+    } else {
+      const parentComment = map.get(comment.parentId)!
+      parentComment.replies.push(comment)
+    }
+  })
+
+  return roots
+}
+
 export function useComments() {
   const [comments, setComments] = React.useState<Comment[]>(data)
 
   const actions = React.useMemo<Actions>(() => ({
     createComment(content) {
       const newComment: Comment = {
+        parentId: null,
         id: crypto.randomUUID(),
         content,
         createdAt: "just now",
@@ -68,8 +52,9 @@ export function useComments() {
 
       setComments(state => [...state, newComment])
     },
-    createReply(id, replyingTo, content) {
+    createReply(parentId, replyingTo, content) {
       const newReply: Comment = {
+        parentId,
         id: crypto.randomUUID(),
         content,
         createdAt: "just now",
@@ -79,12 +64,7 @@ export function useComments() {
         replies: []
       }
 
-      setComments(state =>
-        updateComment(state, id, comment => ({
-          ...comment,
-          replies: comment.replies.concat(newReply)
-        }))
-      )
+      setComments(state => [...state, newReply])
     },
     deleteComment(id) {
       setComments(state => filterComment(state, id))
@@ -110,7 +90,7 @@ export function useComments() {
   }), [])
 
   return {
-    comments: [...comments].sort((a, b) => b.score - a.score),
+    comments: buildTree(comments),
     actions
   }
 }

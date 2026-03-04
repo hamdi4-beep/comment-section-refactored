@@ -140,7 +140,7 @@ const Comment = memo(function Comment({
         )}
       </div>
 
-      {comment.replies && (
+      {comment.replies.length > 0 && (
         <div className="reply-list">
           {comment.replies.map(reply => (
             <Comment
